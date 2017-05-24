@@ -1,0 +1,47 @@
+.bgPadding {
+	max-width: 100% !important;
+}
+
+.widthControl {
+	max-width: 1410px !important;
+}
+
+.rightCol {
+	min-width: 200px !important;
+}
+
+.right2Col {
+	min-width: 230px !important;
+}
+
+.navcon {
+	max-width: 1410px !important;
+}
+
+.widthControl .footerlinks {
+	max-width: 1410px !important;
+}
+
+.leftCol {
+	min-width: 170px !important;
+}
+
+#i4_bottom {
+	display: none !important;
+}
+
+#i1_top {
+	display: none !important;
+}
+
+#i1_middle {
+	display: none !important;
+}
+
+#i0_forum {
+	display: none !important;
+}
+
+.rek {
+	display: none !important;
+}
