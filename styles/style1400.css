@@ -45,3 +45,15 @@
 .rek {
 	display: none !important;
 }
+
+.matchCat {
+	box-shadow: inset 3px 0 0 0 #e63865 !important;
+}
+
+.csCat {
+	box-shadow: inset 3px 0 0 0 #ffae00 !important;
+}
+
+.newsCat {
+	box-shadow: inset 3px 0 0 0 #55a528 !important;
+}

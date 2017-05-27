@@ -1,0 +1,59 @@
+.bgPadding {
+	max-width: 100% !important;
+}
+
+.widthControl {
+	max-width: 1310px !important;
+}
+
+.rightCol {
+	min-width: 186px !important;
+}
+
+.right2Col {
+	min-width: 214px !important;
+}
+
+.navcon {
+	max-width: 1310px !important;
+}
+
+.widthControl .footerlinks {
+	max-width: 1310px !important;
+}
+
+.leftCol {
+	min-width: 158px !important;
+}
+
+#i4_bottom {
+	display: none !important;
+}
+
+#i1_top {
+	display: none !important;
+}
+
+#i1_middle {
+	display: none !important;
+}
+
+#i0_forum {
+	display: none !important;
+}
+
+.rek {
+	display: none !important;
+}
+
+.matchCat {
+	box-shadow: inset 3px 0 0 0 #e63865 !important;
+}
+
+.csCat {
+	box-shadow: inset 3px 0 0 0 #ffae00 !important;
+}
+
+.newsCat {
+	box-shadow: inset 3px 0 0 0 #55a528 !important;
+}
