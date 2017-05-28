@@ -8,6 +8,11 @@ function init() {
     	width = items.width;
     	useColors = items.colors;
 
+    	if (width == undefined || ranking == undefined) {
+    		width = '1400';
+    		ranking = 10;
+    	}
+
     	determineLayout(ranking, width, useColors);
   	});
 }
@@ -18,7 +23,10 @@ function determineLayout(ranking, width, useColors) {
 	window.addEventListener("DOMContentLoaded", function() {
 		insertUsernameIntoNavbar();
 		foldComments();
-		editRanking(ranking);
+		var url = document.URL;
+		if (!(url.startsWith('https://www.hltv.org/matches'))) {
+			editRanking(ranking);
+		}
 
 		if (useColors) {
 			useColorsOnMatches();
@@ -83,17 +91,24 @@ function injectCSS(width) {
 			);
 	        break;
 	    default:
+	    	console.log('Error regarding width. Width = ' + width);
 	}
 }
 
-// Change the number of teams displayed on the rankings
-function editRanking(number) {
-	var teamList = [];
-	var teamIdList = [];
-	var ranking = $('.leftCol')[0].children[3];
+function editRankingShort(number) {
 	var container = $('.col-box-con')[1];
 
+	for (var i = 0; i < number - 5; i++) {
+		$(container).append(ranks[i]);
+	}
+}
+
+function editRanking(number) {
 	$.get("https://www.hltv.org/ranking/teams/", function(response) {
+		var teamList = [];
+		var teamIdList = [];
+		var ranking = $('.leftCol')[0].children[3];
+		var container = $('.col-box-con')[1];
 	    var list = $(response).find('.ranked-team.standard-box');
 		for (var i = 0; i < number; i++) {
 			var elem = list[i].children[0].children[0];
@@ -248,5 +263,37 @@ function useColorsOnMatches() {
 function setBackgroundColor(element, color) {
 	element.parentElement.style.backgroundColor = color;
 }
+
+var ranks = [
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">6</a><img alt="North" src="https://static.hltv.org/images/team/logo/7533" class="teamImg" title="North"><a href="/team/7533/North" class="text-ellipsis"> North</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">7</a><img alt="Natus Vincere" src="https://static.hltv.org/images/team/logo/4608" class="teamImg" title="Natus Vincere"><a href="/team/4608/Natus%20Vincere" class="text-ellipsis"> Natus Vincere</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">8</a><img alt="Gambit" src="https://static.hltv.org/images/team/logo/6651" class="teamImg" title="Gambit"><a href="/team/6651/Gambit" class="text-ellipsis"> Gambit</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">9</a><img alt="HellRaisers" src="https://static.hltv.org/images/team/logo/5310" class="teamImg" title="HellRaisers"><a href="/team/5310/HellRaisers" class="text-ellipsis"> HellRaisers</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">10</a><img alt="OpTic" src="https://static.hltv.org/images/team/logo/6615" class="teamImg" title="OpTic"><a href="/team/6615/OpTic" class="text-ellipsis"> OpTic</a></div>',
+
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">11</a><img alt="fnatic" src="https://static.hltv.org/images/team/logo/4991" class="teamImg" title="fnatic"><a href="/team/4991/fnatic" class="text-ellipsis"> fnatic</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">12</a><img alt="Cloud9" src="https://static.hltv.org/images/team/logo/5752" class="teamImg" title="Cloud9"><a href="/team/5752/Cloud9" class="text-ellipsis"> Cloud9</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">13</a><img alt="NiP" src="https://static.hltv.org/images/team/logo/4411" class="teamImg" title="NiP"><a href="/team/4411/NiP" class="text-ellipsis"> NiP</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">14</a><img alt="mousesports" src="https://static.hltv.org/images/team/logo/4494" class="teamImg" title="mousesports"><a href="/team/4494/mousesports" class="text-ellipsis"> mousesports</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">15</a><img alt="Immortals" src="https://static.hltv.org/images/team/logo/7010" class="teamImg" title="Immortals"><a href="/team/7010/Immortals" class="text-ellipsis"> Immortals</a></div>',
+
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">16</a><img alt="CLG" src="https://static.hltv.org/images/team/logo/5974" class="teamImg" title="CLG"><a href="/team/5974/CLG" class="text-ellipsis"> CLG</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">17</a><img alt="Heroic" src="https://static.hltv.org/images/team/logo/7175" class="teamImg" title="Heroic"><a href="/team/7175/Heroic" class="text-ellipsis"> Heroic</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">18</a><img alt="Misfits" src="https://static.hltv.org/images/team/logo/7557" class="teamImg" title="Misfits"><a href="/team/7557/Misfits" class="text-ellipsis"> Misfits</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">19</a><img alt="Liquid" src="https://static.hltv.org/images/team/logo/5973" class="teamImg" title="Liquid"><a href="/team/5973/Liquid" class="text-ellipsis"> Liquid</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">20</a><img alt="PENTA" src="https://static.hltv.org/images/team/logo/5395" class="teamImg" title="PENTA"><a href="/team/5395/PENTA" class="text-ellipsis"> PENTA</a></div>',
+
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">21</a><img alt="Chiefs" src="https://static.hltv.org/images/team/logo/6010" class="teamImg" title="Chiefs"><a href="/team/6010/Chiefs" class="text-ellipsis"> Chiefs</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">22</a><img alt="Renegades" src="https://static.hltv.org/images/team/logo/6211" class="teamImg" title="Renegades"><a href="/team/6211/Renegades" class="text-ellipsis"> Renegades</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">23</a><img alt="BIG" src="https://static.hltv.org/images/team/logo/7532" class="teamImg" title="BIG"><a href="/team/7532/BIG" class="text-ellipsis"> BIG</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">24</a><img alt="Singularity" src="https://static.hltv.org/images/team/logo/6978" class="teamImg" title="Singularity"><a href="/team/6978/Singularity" class="text-ellipsis"> Singularity</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">25</a><img alt="GODSENT" src="https://static.hltv.org/images/team/logo/6902" class="teamImg" title="GODSENT"><a href="/team/6902/GODSENT" class="text-ellipsis"> GODSENT</a></div>',
+
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">26</a><img alt="EnVyUs" src="https://static.hltv.org/images/team/logo/5991" class="teamImg" title="EnVyUs"><a href="/team/5991/EnVyUs" class="text-ellipsis"> EnVyUs</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">27</a><img alt="Tricked" src="https://static.hltv.org/images/team/logo/4602" class="teamImg" title="Tricked"><a href="/team/4602/Tricked" class="text-ellipsis"> Tricked</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">28</a><img alt="Luminosity" src="https://static.hltv.org/images/team/logo/6290" class="teamImg" title="Luminosity"><a href="/team/6290/Luminosity" class="text-ellipsis"> Luminosity</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">29</a><img alt="NRG" src="https://static.hltv.org/images/team/logo/6673" class="teamImg" title="NRG"><a href="/team/6673/NRG" class="text-ellipsis"> NRG</a></div>',
+	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">30</a><img alt="Space Soldiers" src="https://static.hltv.org/images/team/logo/5929" class="teamImg" title="Space Soldiers"><a href="/team/5929/Space-Soldiers" class="text-ellipsis"> Space Soldiers</a></div>'
+	];
 
 init();

@@ -19,20 +19,26 @@ function save_options() {
 
 function reset_options() {
   setRanking(10);
-  setWidth(1400);
-  setColors(true);
+  setWidth('1400');
+  setColors(false);
 
   chrome.storage.sync.set({
     'ranking': 10,
-    'width': 1400,
-    'colors': true
+    'width': '1400',
+    'colors': false
   });
 }
 
 // Restores select box and checkbox state using the preferences stored in chrome.storage.
 function restore_options() {
   chrome.storage.sync.get('ranking', function(response) {
-    setRanking(response.ranking);
+    if (response.ranking == undefined) {
+      setRanking(10);
+      setWidth('1400');
+      setColors(false);
+      save_options();
+    }
+    else setRanking(response.ranking);
   });
 
   chrome.storage.sync.get('width', function(response) {
@@ -61,10 +67,16 @@ function setRanking(num) {
 }
 
 function setWidth(num) {
-  document.getElementById('width').value = num;
-  document.getElementById('widthNumber').value = num;
+  if (num == undefined) {
+    document.getElementById('width').value = 1400;
+    document.getElementById('widthNumber').value = 1400;
+  }
+  else {
+    document.getElementById('width').value = num;
+    document.getElementById('widthNumber').value = num;
+  }
 }
 
 function setColors(bool) {
-  document.getElementById('switch').value = bool;
+  document.getElementById('switch').checked = bool;
 }

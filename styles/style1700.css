@@ -25,35 +25,3 @@
 .leftCol {
 	min-width: 206px !important;
 }
-
-#i4_bottom {
-	display: none !important;
-}
-
-#i1_top {
-	display: none !important;
-}
-
-#i1_middle {
-	display: none !important;
-}
-
-#i0_forum {
-	display: none !important;
-}
-
-.rek {
-	display: none !important;
-}
-
-.matchCat {
-	box-shadow: inset 3px 0 0 0 #e63865 !important;
-}
-
-.csCat {
-	box-shadow: inset 3px 0 0 0 #ffae00 !important;
-}
-
-.newsCat {
-	box-shadow: inset 3px 0 0 0 #55a528 !important;
-}
