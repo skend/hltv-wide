@@ -24,7 +24,9 @@ function determineLayout(ranking, width, useColors) {
 		insertUsernameIntoNavbar();
 		foldComments();
 		var url = document.URL;
-		if (!(url.startsWith('https://www.hltv.org/matches'))) {
+		if (!(url.startsWith('https://www.hltv.org/matches') || 
+			url.startsWith('https://www.hltv.org/events') || 
+			url.startsWith('https://www.hltv.org/ranking/teams'))) {
 			editRanking(ranking);
 		}
 
