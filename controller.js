@@ -237,8 +237,8 @@ function useColorsOnMatches() {
 		'#e0f0ff',
 		'#dcf4dd',
 		'#d9d6fc',
-		'#f2dddc',
-		'#efe8d0'
+		'rgb(241, 201, 175)',
+		'#e8de9e'
 	];
 
 	$('.star1').each(function() {
