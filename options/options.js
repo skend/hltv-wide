@@ -2,12 +2,15 @@
 function save_options() {
   var ranking = document.getElementById('ranking').value;
   var width = document.getElementById('width').value;
-  var colors = document.getElementById('switch').checked;
+  var colors = document.getElementById('star').checked;
+  var switchBoxes = document.getElementById('switch').checked;
   chrome.storage.sync.set({
     'ranking': ranking,
     'width': width,
-    'colors': colors
-  }, function() {
+    'colors': colors,
+    'switchBoxes': switchBoxes
+  }, 
+  function() {
     // Update status to let user know options were saved.
     var status = document.getElementById('status');
     status.textContent = 'Options saved!';
@@ -21,11 +24,13 @@ function reset_options() {
   setRanking(10);
   setWidth('1400');
   setColors(false);
+  setBoxes(false);
 
   chrome.storage.sync.set({
     'ranking': 10,
     'width': '1400',
-    'colors': false
+    'colors': false,
+    'switchBoxes': false
   });
 }
 
@@ -36,6 +41,7 @@ function restore_options() {
       setRanking(10);
       setWidth('1400');
       setColors(false);
+      setBoxes(false);
       save_options();
     }
     else setRanking(response.ranking);
@@ -47,6 +53,10 @@ function restore_options() {
 
   chrome.storage.sync.get('colors', function(response) {
     setColors(response.colors);
+  });
+
+  chrome.storage.sync.get('switchBoxes', function(response) {
+    setBoxes(response.colors);
   });
 }
 
@@ -78,5 +88,9 @@ function setWidth(num) {
 }
 
 function setColors(bool) {
+  document.getElementById('star').checked = bool;
+}
+
+function setBoxes(bool) {
   document.getElementById('switch').checked = bool;
 }
