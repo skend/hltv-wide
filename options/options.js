@@ -56,7 +56,7 @@ function restore_options() {
   });
 
   chrome.storage.sync.get('switchBoxes', function(response) {
-    setBoxes(response.colors);
+    setBoxes(response.switchBoxes);
   });
 }
 
