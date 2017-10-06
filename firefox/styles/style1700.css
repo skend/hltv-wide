@@ -1,0 +1,27 @@
+.bgPadding {
+	max-width: 100% !important;
+}
+
+.widthControl {
+	max-width: 1710px !important;
+}
+
+.rightCol {
+	min-width: 243px !important;
+}
+
+.right2Col {
+	min-width: 279px !important;
+}
+
+.navcon {
+	max-width: 1710px !important;
+}
+
+.widthControl .footerlinks {
+	max-width: 1710px !important;
+}
+
+.leftCol {
+	min-width: 206px !important;
+}

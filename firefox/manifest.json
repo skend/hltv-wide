@@ -1,9 +1,18 @@
 {
     "manifest_version": 2,
     "name": "hltv-wide",
-    "version": "1.5.33",
+    "version": "1.5.352",
     "description": "Makes hltv.org wider.",
-    "options_page": "options/options.html",
+    "options_ui": {
+    	"page": "options/options.html"
+    },
+
+    "applications": {
+        "gecko": {
+          "id": "hltv-wide@skend.com",
+          "strict_min_version": "42.0"
+        }
+    },
 
     "permissions": [
         "storage",
