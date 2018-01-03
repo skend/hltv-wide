@@ -2,30 +2,36 @@ function init() {
 	var ranking;
 	var width;
 	var useColors;
+	var setBoxes;
+	var commentPages;
 
 	chrome.storage.sync.get(null, function(items) {
     	ranking = items.ranking;
     	width = items.width;
     	useColors = items.colors;
-    	setBoxes = items.switchBoxes;
+		setBoxes = items.switchBoxes;
+		commentPages = item.commentPages;
+	  });
+	  
+	if (width == undefined || ranking == undefined) {
+		width = '1400';
+		ranking = 10;
+		useColors = false;
+		setBoxes = false;
+		commentPages = false;
+	}
 
-    	if (width == undefined || ranking == undefined) {
-    		width = '1400';
-    		ranking = 10;
-    	}
-
-    	determineLayout(ranking, width, useColors, setBoxes);
-  	});
-}
-
-function determineLayout(ranking, width, useColors, setBoxes) {
 	injectCSS(width);
 
 	window.addEventListener("DOMContentLoaded", function() {
+		if (commentPages) {
+			pageComments();
+		}
+
 		insertUsernameIntoNavbar();
 		foldComments();
 		var url = document.URL;
-		// LUL
+	
 		if (!(url.startsWith('https://www.hltv.org/matches') || 
 			url.startsWith('https://www.hltv.org/events') || 
 			url.startsWith('https://www.hltv.org/ranking/teams') ||
@@ -42,6 +48,139 @@ function determineLayout(ranking, width, useColors, setBoxes) {
 		if (setBoxes && url == 'https://www.hltv.org/')
 			switchReplaysAndStreams();
 	});
+}
+
+// This function should only be called once on page load.
+function pageComments() {
+	var forum = document.getElementsByClassName('forum');
+	var comments;
+
+	if (forum.length == 0) return;
+	else {
+		forum = forum[0];
+		comments = [].slice.call(forum.children);
+		comments = comments.slice(0, comments.length - 4);
+	}
+
+	var numComments = comments.length;
+
+	var htmlToInject = `<div class="page-btns" style="float: right;">
+							<div class="page-btn" id="first-page" onclick="firstPage()" style="width: 75px; height:30px;display: inline-block;border: 1px solid #cccccc;background-color: #f6f6f9;text-align: center;line-height: 30px;font-size: 12px;">First Page</div>
+							<div class="page-btn" id="previous-page" onclick="previousPage()" style="width: 100px; height:30px;display: inline-block;border: 1px solid #cccccc;background-color: #f6f6f9;text-align: center;line-height: 30px;font-size: 12px;">Previous Page</div>
+							<div class="page-btn" id="next-page" onclick="nextPage()" style="width: 75px; height:30px;display: inline-block;border: 1px solid #cccccc;background-color: #f6f6f9;text-align: center;line-height: 30px;font-size: 12px;">Next Page</div>
+							<div class="page-btn" id="last-page" onclick="lastPage()" style="width: 75px; height:30px;display: inline-block;border: 1px solid #cccccc;background-color: #f6f6f9;text-align: center;line-height: 30px;font-size: 12px;">Last Page</div>
+						</div>`;
+	var node = document.getElementsByClassName('newreply-spacer')[0];
+	node.insertAdjacentHTML('beforebegin', htmlToInject);
+
+	htmlToInject = `<script>
+						var forum = document.getElementsByClassName('forum')[0];
+						var numComments = forum.children.length - 4;
+						var commentsPerPage = 20;
+						var hash = window.location.hash;
+						var currentPageNum = 0;
+
+						if (hash.length > 0) {
+							currentPageNum = hash.substring(6, hash.length) - 1;
+						}
+						else {
+							window.location.hash = 'page-1';
+							currentPageNum = 0;
+						}
+
+						function firstPage() {
+							window.history.pushState({ page: "first-page" }, "", "#page-1");
+							showComments(0);
+						}
+
+						function previousPage() {
+							var newPageNum = currentPageNum - 1;
+							window.history.pushState({ page: "page"+newPageNum }, "", "#page-"+newPageNum);
+							showComments(newPageNum);
+						}
+
+						function nextPage() {
+							var newPageNum = currentPageNum + 1;
+							window.history.pushState({ page: "page" + newPageNum }, "", "#page-" + newPageNum);
+							showComments(newPageNum);
+						}
+
+						function lastPage() {
+							var newPageNum = int(numComments / commentsPerPage) + 1;
+							window.history.pushState({ page: "page" + newPageNum }, "", "#page-" + newPageNum);
+							showLastNComments(numComments % commentsPerPage);
+						}
+
+						function showLastNComments(N) {
+							var i = 0;
+							while (i < numComments - N) {
+								forum.children[i].style.display = 'none';
+								i++;
+							}
+
+							var j = i;
+							while (j < N) {
+								forum.children[j].style.display = 'block';
+								j++;
+							}
+						}
+
+						function showCommentsByPage(pageNum) {
+							commentsPerPage *= 2;
+							var start = pageNum * commentsPerPage;
+							var i = 0;
+							while (i < start) {
+								forum.children[i].style.display = 'none';
+								i++;
+							}
+
+							for (var j = i; j < commentsPerPage; j++) {
+								forum.children[j].style.display = 'block';
+
+								if (j == numComments) return;
+							}
+
+							i = i + commentsPerPage;
+							while (i < numComments) {
+								forum.children[i].style.display = 'none';
+								i++;
+							}
+						}
+					</script>`;
+	node = document.getElementsByClassName('contentCol')[0];
+	node.insertAdjacentHTML('beforebegin', htmlToInject);
+
+	var hash = window.location.hash;
+	var pageNum = 0;
+
+	if (hash.length > 0) {
+		pageNum = hash.substring(6, hash.length) - 1;
+	}
+	else {
+		window.location.hash = 'page-1';
+		pageNum = 0;
+	}
+
+	// show correct comments
+	var commentsPerPage = 20;
+	var start = pageNum * commentsPerPage;
+	var i = 0;
+	while (i < start) {
+		forum.children[i].style.display = 'none';
+		i++;
+	}
+
+	for (var j = i; j < commentsPerPage; j++) {
+		forum.children[j].style.display = 'block';
+
+		if (j == numComments) return;
+	}
+
+	i = i + commentsPerPage;
+	while (i < numComments) {
+		forum.children[i].style.display = 'none';
+		i++;
+	}
 }
 
 function switchReplaysAndStreams() {

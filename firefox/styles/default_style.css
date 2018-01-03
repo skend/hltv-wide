@@ -37,3 +37,12 @@
 .scoreboard {
 	max-width: none !important;
 }
+
+.newreply-con {
+	top: 40px;
+}
+
+.page-btn:hover {
+	background-color: #e6e6e9;
+	cursor: pointer;
+}

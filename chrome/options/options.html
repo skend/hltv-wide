@@ -1,46 +1,66 @@
 <html>
-	<head>
-		<title>hltv-wide options</title>
-		<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
-		<link rel="stylesheet" href="style.css">
-	</head>
-	<body>
-		<div id="wrapper">
-			<h1>Options: </h1>
-			<div>
-				<span id="ranking-heading">Number of teams on ranking list: </span>
-				<br>
-				<input id="ranking" type="range" min="5" max="30" step="1" value="10" />
-				<input type="text" id="rankingNumber" value="10" readonly>
-			</div>
-			
-			<br><br>
 
-			<div>
-				<span id="width-heading">Width of the page: </span>
-				<br>
-				<input id="width" type="range" min="1000" max="1800" step="100" />
-				<input type="text" id="widthNumber" value="1400" readonly>
-			</div>
+<head>
+	<title>hltv-wide options</title>
+	<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+	<link rel="stylesheet" href="style.css">
+</head>
 
-			<br><br>
-			
-				<span style="font-size: 17px; position: relative; top: 7px;">Use star colors on matches: </span>
-				<input id="star" type="checkbox" name="star-colors" value="color" /><label for="star">Toggle</label>
-				<br><br><br>
-
-				<span style="font-size: 17px; position: relative; top: 7px;padding-right: 2px;">Switch replays and streams:</span>
-				<input id="switch" type="checkbox" name="switch-aside" value="color" /><label for="switch">Toggle</label>
-				<br><br><br>
-
-			<button class="btn">Save</button>
-			<button style="margin-left: 130px" class="reset">Reset</button>
-
-			<div id="status"></div>
-
-			<div id="hltv"><a href="https://www.hltv.org/message/write/487354" target="_blank">Bug reports/feature requests go here.</a></div>
-			
-			<script src="options.js"></script>
+<body>
+	<div id="wrapper">
+		<h1>Options: </h1>
+		<div>
+			<span id="ranking-heading">Number of teams on ranking list: </span>
+			<br>
+			<input id="ranking" type="range" min="5" max="30" step="1" value="10" />
+			<input type="text" id="rankingNumber" value="10" readonly>
 		</div>
-	</body>
+
+		<br>
+		<br>
+
+		<div>
+			<span id="width-heading">Width of the page: </span>
+			<br>
+			<input id="width" type="range" min="1000" max="1800" step="100" />
+			<input type="text" id="widthNumber" value="1400" readonly>
+		</div>
+
+		<br>
+		<br>
+
+		<span style="font-size: 17px; position: relative; top: 7px;">Use star colors on matches: </span>
+		<input id="star" type="checkbox" name="star-colors" value="color" />
+		<label for="star">Toggle</label>
+		<br>
+		<br>
+		<br>
+
+		<span style="font-size: 17px; position: relative; top: 7px;padding-right: 2px;">Switch replays and streams:</span>
+		<input id="switch" type="checkbox" name="switch-aside" value="color" />
+		<label for="switch">Toggle</label>
+		<br>
+		<br>
+		<br>
+
+		<span style="font-size: 17px; position: relative; top: 7px;">Display comment pages: </span>
+		<input id="pages" type="checkbox" name="comment-pages" value="color" />
+		<label for="pages">Toggle</label>
+		<br>
+		<br>
+		<br>
+
+		<button class="btn">Save</button>
+		<button style="margin-left: 130px" class="reset">Reset</button>
+
+		<div id="status"></div>
+
+		<div id="hltv">
+			<a href="https://www.hltv.org/message/write/487354" target="_blank">Bug reports/feature requests go here.</a>
+		</div>
+
+		<script src="options.js"></script>
+	</div>
+</body>
+
 </html>

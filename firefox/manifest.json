@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "hltv-wide",
-    "version": "1.5.352",
+    "version": "1.5.38",
     "description": "Makes hltv.org wider.",
     "options_ui": {
     	"page": "options/options.html"
@@ -36,7 +36,7 @@
     "content_scripts" : [{
         "matches" : ["https://www.hltv.org/*"],
         "css" : ["styles/default_style.css"],
-        "js" : ["lib/jquery.js", "controller.js"],
+        "js" : ["sanitizer.js", "jquery-3.2.1.min.js", "controller.js"],
         "run_at" : "document_start"
     }]
 }
