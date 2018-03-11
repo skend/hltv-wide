@@ -66,7 +66,7 @@ function restore_options() {
   });
 
   chrome.storage.sync.get('commentPages', function (response) {
-    setBoxes(response.commentPages);
+    setCommentPages(response.commentPages);
   });
 }
 

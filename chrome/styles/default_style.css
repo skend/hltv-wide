@@ -37,3 +37,29 @@
 .scoreboard {
 	max-width: none !important;
 }
+
+.newreply-con {
+	top: 40px;
+	padding-bottom: 40px;
+}
+
+.page-btn {
+	width: 75px;
+    height: 30px;
+    display: inline-block;
+    border: 1px solid #cccccc;
+    background-color: #f6f6f9;
+    text-align: center;
+    line-height: 30px;
+	font-size: 12px;
+	user-select: none;
+}
+
+#previous-page {
+	width: 100px;
+}
+
+.page-btn:hover {
+	background-color: #dadada;
+	cursor: pointer;
+}

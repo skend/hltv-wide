@@ -1,6 +1,6 @@
 function init() {
 	var ranking;
-	var width;
+	// var width;
 	var useColors;
 	var setBoxes;
 	var commentPages;
@@ -8,27 +8,27 @@ function init() {
 	var results = browser.storage.sync.get();
 	results.then(function(item) {
 		ranking = item.ranking;
-		width = item.width;
+		// width = item.width;
     	useColors = item.colors;
 		setBoxes = item.switchBoxes;
 		commentPages = item.commentPages;
 	}, function() {
 	    ranking = 10;
-	    width = '1400';
+	    // width = '1400';
 	    useColors = false;
 		setBoxes = false;
 		commentPages = false;
 	});
 
-    if (width == undefined || ranking == undefined) {
-    	width = '1400';
+    if (ranking == undefined) {
+    	// width = '1400';
 		ranking = 10;
 		useColors = false;
 		setBoxes = false;
 		commentPages = false;
 	}
 
-	injectCSS(width);
+	// injectCSS(width);
 
 	window.addEventListener("DOMContentLoaded", function() {
 		if (commentPages) {
@@ -125,21 +125,24 @@ function swapNodes(a, b) {
 }
 
 function injectCSS(width) {
-	var reg = /^\d+$/;
-	if (!reg.test(width)) {
-		console.log('invalid width variable. possibly non-numeric.');
-		return;
-	}
+	// var reg = /^\d+$/;
+	// if (!reg.test(width)) {
+	// 	console.log('invalid width variable. possibly non-numeric.');
+	// 	return;
+	// }
 
-	var validWidth = ['1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800'];
-	if (!validWidth.includes(width)) {
-		console.log('invalid width specified. cannot find css file.');
-		return;
-	}
+	// var validWidth = ['1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800'];
+	// if (!validWidth.includes(width)) {
+	// 	console.log('invalid width specified. cannot find css file.');
+	// 	return;
+	// }
 
-	var a = browser.extension.getURL("styles/style" + width + ".css");
+	// var a = browser.extension.getURL("styles/style" + width + ".css");
+	// $('<link rel="stylesheet" type="text/css" href="' + a + '" >').appendTo("head");
+	// console.log('inserted.');
+
+	var a = browser.extension.getURL("styles/default_style.css");
 	$('<link rel="stylesheet" type="text/css" href="' + a + '" >').appendTo("head");
-	console.log('inserted.');
 }
 
 function editRankingShort(number) {

@@ -1,14 +1,14 @@
 // Saves options to chrome.storage
 function save_options() {
   var ranking = document.getElementById('ranking').value;
-  var width = document.getElementById('width').value;
+  // var width = document.getElementById('width').value;
   var colors = document.getElementById('star').checked;
   var switchBoxes = document.getElementById('switch').checked;
   var commentPages = document.getElementById('pages').checked;
   
   var set = browser.storage.sync.set({
     'ranking': ranking,
-    'width': width,
+    // 'width': width,
     'colors': colors,
     'switchBoxes': switchBoxes,
     'commentPages': commentPages
@@ -25,14 +25,14 @@ function save_options() {
 
 function reset_options() {
   setRanking(10);
-  setWidth('1400');
+  // setWidth('1400');
   setColors(false);
   setBoxes(false);
   setCommentPages(false);
 
   browser.storage.sync.set({
     'ranking': 10,
-    'width': '1400',
+    // 'width': '1400',
     'colors': false,
     'switchBoxes': false,
     'commentPages': false
@@ -44,13 +44,13 @@ function restore_options() {
   var ranking = browser.storage.sync.get();
   ranking.then(function(item) {
     setRanking(item.ranking);
-    setWidth(item.width);
+    // setWidth(item.width);
     setColors(item.colors);
     setBoxes(item.switchBoxes);
     setCommentPages(item.commentPages);
   }, function() {
     setRanking(10);
-    setWidth('1400');
+    // setWidth('1400');
     setColors(false);
     setBoxes(false);
     setCommentPages(false);
@@ -64,25 +64,25 @@ document.getElementsByClassName('reset')[0].addEventListener('click', reset_opti
 document.getElementById('ranking').addEventListener('change', function() {
   document.getElementById('rankingNumber').value = this.value; 
 });
-document.getElementById('width').addEventListener('change', function() {
-  document.getElementById('widthNumber').value = this.value;
-});
+// document.getElementById('width').addEventListener('change', function() {
+//   document.getElementById('widthNumber').value = this.value;
+// });
 
 function setRanking(num) {
   document.getElementById('ranking').value = num;
   document.getElementById('rankingNumber').value = num;
 }
 
-function setWidth(num) {
-  if (num == undefined) {
-    document.getElementById('width').value = 1400;
-    document.getElementById('widthNumber').value = 1400;
-  }
-  else {
-    document.getElementById('width').value = num;
-    document.getElementById('widthNumber').value = num;
-  }
-}
+// function setWidth(num) {
+//   if (num == undefined) {
+//     document.getElementById('width').value = 1400;
+//     document.getElementById('widthNumber').value = 1400;
+//   }
+//   else {
+//     document.getElementById('width').value = num;
+//     document.getElementById('widthNumber').value = num;
+//   }
+// }
 
 function setColors(bool) {
   document.getElementById('star').checked = bool;

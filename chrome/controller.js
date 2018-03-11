@@ -10,17 +10,21 @@ function init() {
     	width = items.width;
     	useColors = items.colors;
 		setBoxes = items.switchBoxes;
-		commentPages = item.commentPages;
-	  });
-	  
-	if (width == undefined || ranking == undefined) {
-		width = '1400';
-		ranking = 10;
-		useColors = false;
-		setBoxes = false;
-		commentPages = false;
-	}
+		commentPages = items.commentPages;
 
+		if (width == undefined || ranking == undefined) {
+			width = '1400';
+			ranking = 10;
+			useColors = false;
+			setBoxes = false;
+			commentPages = false;
+		}
+
+		determineLayout(ranking, width, useColors, setBoxes, commentPages);
+	  });
+}
+
+function determineLayout(ranking, width, useColors, setBoxes, commentPages) {
 	injectCSS(width);
 
 	window.addEventListener("DOMContentLoaded", function() {
@@ -53,132 +57,162 @@ function init() {
 // This function should only be called once on page load.
 function pageComments() {
 	var forum = document.getElementsByClassName('forum');
-	var comments;
 
 	if (forum.length == 0) return;
 	else {
 		forum = forum[0];
-		comments = [].slice.call(forum.children);
-		comments = comments.slice(0, comments.length - 4);
 	}
 
-	var numComments = comments.length;
+	for (var i = 0; i < forum.children.length; i+=2) {
+		if (forum.children[i].id.startsWith('r')) {
+			comments.push({ parent: forum.children[i], children: forum.children[i+1] });
+		}
+	}
+	console.log(comments.length);
 
 	var htmlToInject = `<div class="page-btns" style="float: right;">
-							<div class="page-btn" id="first-page" onclick="firstPage()" style="width: 75px; height:30px;display: inline-block;border: 1px solid #cccccc;background-color: #f6f6f9;text-align: center;line-height: 30px;font-size: 12px;">First Page</div>
-							<div class="page-btn" id="previous-page" onclick="previousPage()" style="width: 100px; height:30px;display: inline-block;border: 1px solid #cccccc;background-color: #f6f6f9;text-align: center;line-height: 30px;font-size: 12px;">Previous Page</div>
-							<div class="page-btn" id="next-page" onclick="nextPage()" style="width: 75px; height:30px;display: inline-block;border: 1px solid #cccccc;background-color: #f6f6f9;text-align: center;line-height: 30px;font-size: 12px;">Next Page</div>
-							<div class="page-btn" id="last-page" onclick="lastPage()" style="width: 75px; height:30px;display: inline-block;border: 1px solid #cccccc;background-color: #f6f6f9;text-align: center;line-height: 30px;font-size: 12px;">Last Page</div>
+							<div class="page-btn" id="first-page">First Page</div>
+							<div class="page-btn" id="previous-page">Previous Page</div>
+							<div class="page-btn" id="next-page">Next Page</div>
+							<div class="page-btn" id="last-page">Last Page</div>
 						</div>`;
 	var node = document.getElementsByClassName('newreply-spacer')[0];
 	node.insertAdjacentHTML('beforebegin', htmlToInject);
 
-	htmlToInject = `<script>
-						var forum = document.getElementsByClassName('forum')[0];
-						var numComments = forum.children.length - 4;
-						var commentsPerPage = 20;
-						var hash = window.location.hash;
-						var currentPageNum = 0;
-
-						if (hash.length > 0) {
-							currentPageNum = hash.substring(6, hash.length) - 1;
-						}
-						else {
-							window.location.hash = 'page-1';
-							currentPageNum = 0;
-						}
-
-						function firstPage() {
-							window.history.pushState({ page: "first-page" }, "", "#page-1");
-							showComments(0);
-						}
-
-						function previousPage() {
-							var newPageNum = currentPageNum - 1;
-							window.history.pushState({ page: "page"+newPageNum }, "", "#page-"+newPageNum);
-							showComments(newPageNum);
-						}
-
-						function nextPage() {
-							var newPageNum = currentPageNum + 1;
-							window.history.pushState({ page: "page" + newPageNum }, "", "#page-" + newPageNum);
-							showComments(newPageNum);
-						}
-
-						function lastPage() {
-							var newPageNum = int(numComments / commentsPerPage) + 1;
-							window.history.pushState({ page: "page" + newPageNum }, "", "#page-" + newPageNum);
-							showLastNComments(numComments % commentsPerPage);
-						}
-
-						function showLastNComments(N) {
-							var i = 0;
-							while (i < numComments - N) {
-								forum.children[i].style.display = 'none';
-								i++;
-							}
-
-							var j = i;
-							while (j < N) {
-								forum.children[j].style.display = 'block';
-								j++;
-							}
-						}
-
-						function showCommentsByPage(pageNum) {
-							commentsPerPage *= 2;
-							var start = pageNum * commentsPerPage;
-							var i = 0;
-							while (i < start) {
-								forum.children[i].style.display = 'none';
-								i++;
-							}
-
-							for (var j = i; j < commentsPerPage; j++) {
-								forum.children[j].style.display = 'block';
-
-								if (j == numComments) return;
-							}
-
-							i = i + commentsPerPage;
-							while (i < numComments) {
-								forum.children[i].style.display = 'none';
-								i++;
-							}
-						}
-					</script>`;
-	node = document.getElementsByClassName('contentCol')[0];
-	node.insertAdjacentHTML('beforebegin', htmlToInject);
+	document.getElementById("first-page").addEventListener("click", firstPage);
+	document.getElementById("previous-page").addEventListener("click", previousPage);
+	document.getElementById("next-page").addEventListener("click", nextPage);
+	document.getElementById("last-page").addEventListener("click", lastPage);
 
 	var hash = window.location.hash;
 	var pageNum = 0;
+	var reg = /^#r\d+$/;
+	var focusElementIndex;
 
 	if (hash.length > 0) {
-		pageNum = hash.substring(6, hash.length) - 1;
+		if (reg.test(hash)) {
+			return;
+		}
+		else pageNum = hash.substring(6, hash.length) - 1;
 	}
 	else {
 		window.location.hash = 'page-1';
 		pageNum = 0;
 	}
 
+	console.log('page numbero: ' + pageNum);
+
 	// show correct comments
-	var commentsPerPage = 20;
 	var start = pageNum * commentsPerPage;
 	var i = 0;
 	while (i < start) {
-		forum.children[i].style.display = 'none';
+		comments[i].parent.style.display = 'none';
+		comments[i].children.style.display = 'none';
 		i++;
 	}
 
 	for (var j = i; j < commentsPerPage; j++) {
-		forum.children[j].style.display = 'block';
+		comments[j].parent.style.display = 'block';
+		comments[j].children.style.display = 'block';
 
-		if (j == numComments) return;
+		if (j == comments.length) return;
+	}
+
+	i = i + commentsPerPage;
+	while (i < comments.length) {
+		comments[i].parent.style.display = 'none';
+		comments[i].children.style.display = 'none';
+
+		i++;
+	}
+}
+
+function firstPage() {
+	if (currentPageNum == 1) return;
+
+	currentPageNum = 1;
+	window.history.pushState({ page: "first-page" }, "", "#page-1");
+	window.location.hash = 'page-1'
+	showCommentsByPage(0);
+}
+
+function previousPage() {
+	if (currentPageNum == 1) return;
+
+	var newPageNum = currentPageNum - 1;
+	window.history.pushState({ page: "page" + newPageNum }, "", "#page-" + newPageNum);
+	window.location.hash = 'page-' + newPageNum;
+	currentPageNum = newPageNum;
+	showCommentsByPage(newPageNum);
+}
+
+function nextPage() {
+	if (lastComment) return;
+
+	if (currentPageNum == 0) currentPageNum = 1;
+
+	var newPageNum = currentPageNum + 1;
+	window.history.pushState({ page: "page" + newPageNum }, "", "#page-" + newPageNum);
+	window.location.hash = 'page-' + newPageNum;
+	currentPageNum = newPageNum;
+	showCommentsByPage(newPageNum);
+}
+
+function lastPage() {
+	var forum = document.getElementsByClassName('forum')[0];
+	var numComments = forum.children.length - 4;
+	var newPageNum = Math.floor(numComments / commentsPerPage) + 1;
+	window.history.pushState({ page: "page" + newPageNum }, "", "#page-" + newPageNum);
+	window.location.hash = 'page-' + newPageNum;
+	currentPageNum = newPageNum;
+	showLastNComments(numComments % commentsPerPage);
+}
+
+function showLastNComments(N) {
+	var forum = document.getElementsByClassName('forum')[0];
+	var numComments = forum.children.length - 4;
+	var i = 0;
+	while (i < numComments - N) {
+		forum.children[i].style.display = 'none';
+		i++;
+	}
+
+	var j = i;
+	while (j < N) {
+		forum.children[j].style.display = 'block';
+		j++;
+	}
+}
+
+function showCommentsByPage(pageNum) {
+	var numComments = comments.length;
+	var start = (pageNum-1) * commentsPerPage;
+	var i = 0, j = 0;
+
+	console.log(pageNum, start, start+commentsPerPage, numComments);
+
+	while (i < start) {
+		comments[i].parent.style.display = 'none';
+		comments[i].children.style.display = 'none';
+		i++;
+	}
+
+	comments[i].parent.style.display = 'block';
+	comments[i].parent.scrollIntoView();
+	for (j = i; j < i + commentsPerPage; j++) {
+		if (j == numComments - 1) {
+			lastComment = true;
+			return;
+		}
+
+		comments[j].parent.style.display = 'block';
+		comments[j].children.style.display = 'block';
 	}
 
 	i = i + commentsPerPage;
 	while (i < numComments) {
-		forum.children[i].style.display = 'none';
+		comments[i].parent.style.display = 'none';
+		comments[i].children.style.display = 'none';
 		i++;
 	}
 }
@@ -251,63 +285,63 @@ function swapNodes(a, b) {
 }
 
 function injectCSS(width) {
-	switch(width) {
-	    case '1000':
-	        document.head.insertAdjacentHTML('beforeend',
-			    '<link rel="stylesheet" type="text/css" href="' + 
-           		chrome.runtime.getURL("styles/style1000.css") + '">'
-			);
-	        break;
-	    case '1100':
-	        document.head.insertAdjacentHTML('beforeend',
-			    '<link rel="stylesheet" type="text/css" href="' + 
-           		chrome.runtime.getURL("styles/style1100.css") + '">'
-			);
-	        break;
-	    case '1200':
+	switch (width) {
+		case '1000':
 			document.head.insertAdjacentHTML('beforeend',
-			    '<link rel="stylesheet" type="text/css" href="' + 
-           		chrome.runtime.getURL("styles/style1200.css") + '">'
+				'<link rel="stylesheet" type="text/css" href="' +
+				chrome.runtime.getURL("styles/style1000.css") + '">'
 			);
-	        break;
-	    case '1300':
-	        document.head.insertAdjacentHTML('beforeend',
-			    '<link rel="stylesheet" type="text/css" href="' + 
-           		chrome.runtime.getURL("styles/style1300.css") + '">'
-			);
-	        break;
-	    case '1400':
-	        document.head.insertAdjacentHTML('beforeend',
-			    '<link rel="stylesheet" type="text/css" href="' + 
-           		chrome.runtime.getURL("styles/style1400.css") + '">'
-			);
-	        break;
-	    case '1500':
+			break;
+		case '1100':
 			document.head.insertAdjacentHTML('beforeend',
-			    '<link rel="stylesheet" type="text/css" href="' + 
-           		chrome.runtime.getURL("styles/style1500.css") + '">'
+				'<link rel="stylesheet" type="text/css" href="' +
+				chrome.runtime.getURL("styles/style1100.css") + '">'
 			);
-	        break;
-	    case '1600':
-	        document.head.insertAdjacentHTML('beforeend',
-			    '<link rel="stylesheet" type="text/css" href="' + 
-           		chrome.runtime.getURL("styles/style1600.css") + '">'
-			);
-	        break;
-	    case '1700':
-	        document.head.insertAdjacentHTML('beforeend',
-			    '<link rel="stylesheet" type="text/css" href="' + 
-           		chrome.runtime.getURL("styles/style1700.css") + '">'
-			);
-	        break;
-	    case '1800':
+			break;
+		case '1200':
 			document.head.insertAdjacentHTML('beforeend',
-			    '<link rel="stylesheet" type="text/css" href="' + 
-           		chrome.runtime.getURL("styles/style1800.css") + '">'
+				'<link rel="stylesheet" type="text/css" href="' +
+				chrome.runtime.getURL("styles/style1200.css") + '">'
 			);
-	        break;
-	    default:
-	    	console.log('Error regarding width. Width = ' + width);
+			break;
+		case '1300':
+			document.head.insertAdjacentHTML('beforeend',
+				'<link rel="stylesheet" type="text/css" href="' +
+				chrome.runtime.getURL("styles/style1300.css") + '">'
+			);
+			break;
+		case '1400':
+			document.head.insertAdjacentHTML('beforeend',
+				'<link rel="stylesheet" type="text/css" href="' +
+				chrome.runtime.getURL("styles/style1400.css") + '">'
+			);
+			break;
+		case '1500':
+			document.head.insertAdjacentHTML('beforeend',
+				'<link rel="stylesheet" type="text/css" href="' +
+				chrome.runtime.getURL("styles/style1500.css") + '">'
+			);
+			break;
+		case '1600':
+			document.head.insertAdjacentHTML('beforeend',
+				'<link rel="stylesheet" type="text/css" href="' +
+				chrome.runtime.getURL("styles/style1600.css") + '">'
+			);
+			break;
+		case '1700':
+			document.head.insertAdjacentHTML('beforeend',
+				'<link rel="stylesheet" type="text/css" href="' +
+				chrome.runtime.getURL("styles/style1700.css") + '">'
+			);
+			break;
+		case '1800':
+			document.head.insertAdjacentHTML('beforeend',
+				'<link rel="stylesheet" type="text/css" href="' +
+				chrome.runtime.getURL("styles/style1800.css") + '">'
+			);
+			break;
+		default:
+			console.log('Error regarding width. Width = ' + width);
 	}
 }
 
@@ -480,36 +514,9 @@ function setBackgroundColor(element, color) {
 	element.parentElement.style.backgroundColor = color;
 }
 
-// var ranks = [
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">6</a><img alt="North" src="https://static.hltv.org/images/team/logo/7533" class="teamImg" title="North"><a href="/team/7533/North" class="text-ellipsis"> North</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">7</a><img alt="Natus Vincere" src="https://static.hltv.org/images/team/logo/4608" class="teamImg" title="Natus Vincere"><a href="/team/4608/Natus%20Vincere" class="text-ellipsis"> Natus Vincere</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">8</a><img alt="Gambit" src="https://static.hltv.org/images/team/logo/6651" class="teamImg" title="Gambit"><a href="/team/6651/Gambit" class="text-ellipsis"> Gambit</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">9</a><img alt="HellRaisers" src="https://static.hltv.org/images/team/logo/5310" class="teamImg" title="HellRaisers"><a href="/team/5310/HellRaisers" class="text-ellipsis"> HellRaisers</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">10</a><img alt="OpTic" src="https://static.hltv.org/images/team/logo/6615" class="teamImg" title="OpTic"><a href="/team/6615/OpTic" class="text-ellipsis"> OpTic</a></div>',
-
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">11</a><img alt="fnatic" src="https://static.hltv.org/images/team/logo/4991" class="teamImg" title="fnatic"><a href="/team/4991/fnatic" class="text-ellipsis"> fnatic</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">12</a><img alt="Cloud9" src="https://static.hltv.org/images/team/logo/5752" class="teamImg" title="Cloud9"><a href="/team/5752/Cloud9" class="text-ellipsis"> Cloud9</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">13</a><img alt="NiP" src="https://static.hltv.org/images/team/logo/4411" class="teamImg" title="NiP"><a href="/team/4411/NiP" class="text-ellipsis"> NiP</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">14</a><img alt="mousesports" src="https://static.hltv.org/images/team/logo/4494" class="teamImg" title="mousesports"><a href="/team/4494/mousesports" class="text-ellipsis"> mousesports</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">15</a><img alt="Immortals" src="https://static.hltv.org/images/team/logo/7010" class="teamImg" title="Immortals"><a href="/team/7010/Immortals" class="text-ellipsis"> Immortals</a></div>',
-
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">16</a><img alt="CLG" src="https://static.hltv.org/images/team/logo/5974" class="teamImg" title="CLG"><a href="/team/5974/CLG" class="text-ellipsis"> CLG</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">17</a><img alt="Heroic" src="https://static.hltv.org/images/team/logo/7175" class="teamImg" title="Heroic"><a href="/team/7175/Heroic" class="text-ellipsis"> Heroic</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">18</a><img alt="Misfits" src="https://static.hltv.org/images/team/logo/7557" class="teamImg" title="Misfits"><a href="/team/7557/Misfits" class="text-ellipsis"> Misfits</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">19</a><img alt="Liquid" src="https://static.hltv.org/images/team/logo/5973" class="teamImg" title="Liquid"><a href="/team/5973/Liquid" class="text-ellipsis"> Liquid</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">20</a><img alt="PENTA" src="https://static.hltv.org/images/team/logo/5395" class="teamImg" title="PENTA"><a href="/team/5395/PENTA" class="text-ellipsis"> PENTA</a></div>',
-
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">21</a><img alt="Chiefs" src="https://static.hltv.org/images/team/logo/6010" class="teamImg" title="Chiefs"><a href="/team/6010/Chiefs" class="text-ellipsis"> Chiefs</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">22</a><img alt="Renegades" src="https://static.hltv.org/images/team/logo/6211" class="teamImg" title="Renegades"><a href="/team/6211/Renegades" class="text-ellipsis"> Renegades</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">23</a><img alt="BIG" src="https://static.hltv.org/images/team/logo/7532" class="teamImg" title="BIG"><a href="/team/7532/BIG" class="text-ellipsis"> BIG</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">24</a><img alt="Singularity" src="https://static.hltv.org/images/team/logo/6978" class="teamImg" title="Singularity"><a href="/team/6978/Singularity" class="text-ellipsis"> Singularity</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">25</a><img alt="GODSENT" src="https://static.hltv.org/images/team/logo/6902" class="teamImg" title="GODSENT"><a href="/team/6902/GODSENT" class="text-ellipsis"> GODSENT</a></div>',
-
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">26</a><img alt="EnVyUs" src="https://static.hltv.org/images/team/logo/5991" class="teamImg" title="EnVyUs"><a href="/team/5991/EnVyUs" class="text-ellipsis"> EnVyUs</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">27</a><img alt="Tricked" src="https://static.hltv.org/images/team/logo/4602" class="teamImg" title="Tricked"><a href="/team/4602/Tricked" class="text-ellipsis"> Tricked</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">28</a><img alt="Luminosity" src="https://static.hltv.org/images/team/logo/6290" class="teamImg" title="Luminosity"><a href="/team/6290/Luminosity" class="text-ellipsis"> Luminosity</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">29</a><img alt="NRG" src="https://static.hltv.org/images/team/logo/6673" class="teamImg" title="NRG"><a href="/team/6673/NRG" class="text-ellipsis"> NRG</a></div>',
-// 	'<div class="col-box rank"><a href="/ranking/teams" class="rankNum">30</a><img alt="Space Soldiers" src="https://static.hltv.org/images/team/logo/5929" class="teamImg" title="Space Soldiers"><a href="/team/5929/Space-Soldiers" class="text-ellipsis"> Space Soldiers</a></div>'
-// 	];
+var commentsPerPage = 15;
+var currentPageNum = 1;
+var comments = [];
+var lastComment = false;
 
 init();
