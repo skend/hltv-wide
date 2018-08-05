@@ -28,35 +28,54 @@ function init() {
 		commentPages = false;
 	}
 
+	if (commentPages) {
+		pageComments();
+	}
+
+	insertUsernameIntoNavbar();
+
+	foldComments();
+	var url = document.URL;
+
+	// *vomits*
+	if (!(url.startsWith('https://www.hltv.org/matches') ||
+		url.startsWith('https://www.hltv.org/events') ||
+		url.startsWith('https://www.hltv.org/ranking/teams') ||
+		url.startsWith('https://www.hltv.org/results') ||
+		url.startsWith('https://www.hltv.org/stats') ||
+		url.startsWith('https://www.hltv.org/galleries'))) {
+		editRanking(ranking);
+	}
+
+	if (useColors) {
+		useColorsOnMatches();
+	}
+
+	if (setBoxes && url == 'https://www.hltv.org/')
+		switchReplaysAndStreams();
+
 	// injectCSS(width);
+	injectCSS();
+	
+	// var logo_big = document.getElementsByClassName('teamlogo');
 
-	window.addEventListener("DOMContentLoaded", function() {
-		if (commentPages) {
-			pageComments();
-		}
+	// if (logo_big.length > 0) {
+	// 	if (logo_big.src == "https://static.hltv.org/images/team/logo/1043" ||
+	// 		logo_big.src == "/img/static/event/logo/noLogo.png") {
+	// 		logo_big = logo_big[0];
+	// 		logo_big.style.cssText += "display: none;";
+	// 	}
+	// }
 
-		insertUsernameIntoNavbar();
-
-		foldComments();
-		var url = document.URL;
-		
-		// *vomits*
-		if (!(url.startsWith('https://www.hltv.org/matches') || 
-			url.startsWith('https://www.hltv.org/events') || 
-			url.startsWith('https://www.hltv.org/ranking/teams') ||
-			url.startsWith('https://www.hltv.org/results') ||
-			url.startsWith('https://www.hltv.org/stats') ||
-			url.startsWith('https://www.hltv.org/galleries'))) {
-			editRanking(ranking);
-		}
-
-		if (useColors) {
-			useColorsOnMatches();
-		}
-
-		if (setBoxes && url == 'https://www.hltv.org/')
-			switchReplaysAndStreams();
-	});
+	// var logos = document.getElementsByClassName('team-logo');
+	// if (logos.length > 0) {
+	// 	for (let logo of logos) {
+	// 		if (logo.src == "https://static.hltv.org/images/team/logo/1043" ||
+	// 			logo.src == "/img/static/event/logo/noLogo.png") {
+	// 			logo.style.cssText += "display: none;";
+	// 		}
+	// 	}
+	// }
 }
 
 function switchReplaysAndStreams() {
@@ -124,25 +143,18 @@ function swapNodes(a, b) {
     aparent.insertBefore(b, asibling);
 }
 
-function injectCSS(width) {
-	// var reg = /^\d+$/;
-	// if (!reg.test(width)) {
-	// 	console.log('invalid width variable. possibly non-numeric.');
-	// 	return;
-	// }
+function injectCSS() {
+	var cookie = browser.cookies.get({
+		name: "nightmode"
+	});
 
-	// var validWidth = ['1100', '1200', '1300', '1400', '1500', '1600', '1700', '1800'];
-	// if (!validWidth.includes(width)) {
-	// 	console.log('invalid width specified. cannot find css file.');
-	// 	return;
-	// }
+	var body = document.getElementsByTagName('body')[0];
 
-	// var a = browser.extension.getURL("styles/style" + width + ".css");
-	// $('<link rel="stylesheet" type="text/css" href="' + a + '" >').appendTo("head");
-	// console.log('inserted.');
-
-	var a = browser.extension.getURL("styles/default_style.css");
-	$('<link rel="stylesheet" type="text/css" href="' + a + '" >').appendTo("head");
+	cookie.then(function (value) {
+		if (value == 'on') {
+			body.style.background = "#1b1f23 !important"
+		}
+	});
 }
 
 function editRankingShort(number) {

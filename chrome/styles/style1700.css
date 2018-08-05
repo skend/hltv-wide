@@ -25,3 +25,7 @@
 .leftCol {
 	min-width: 206px !important;
 }
+
+.overlayImageFrame {
+	padding-top: 44px;
+}

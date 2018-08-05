@@ -51,6 +51,7 @@ function determineLayout(ranking, width, useColors, setBoxes, commentPages) {
 
 		if (setBoxes && url == 'https://www.hltv.org/')
 			switchReplaysAndStreams();
+
 	});
 }
 
@@ -68,7 +69,6 @@ function pageComments() {
 			comments.push({ parent: forum.children[i], children: forum.children[i+1] });
 		}
 	}
-	console.log(comments.length);
 
 	var htmlToInject = `<div class="page-btns" style="float: right;">
 							<div class="page-btn" id="first-page">First Page</div>
@@ -100,10 +100,10 @@ function pageComments() {
 		pageNum = 0;
 	}
 
-	console.log('page numbero: ' + pageNum);
+	currentPageNum = pageNum;
 
 	// show correct comments
-	var start = pageNum * commentsPerPage;
+	var start = currentPageNum * commentsPerPage;
 	var i = 0;
 	while (i < start) {
 		comments[i].parent.style.display = 'none';
@@ -129,6 +129,7 @@ function pageComments() {
 
 function firstPage() {
 	if (currentPageNum == 1) return;
+	lastComment = false;
 
 	currentPageNum = 1;
 	window.history.pushState({ page: "first-page" }, "", "#page-1");
@@ -138,6 +139,7 @@ function firstPage() {
 
 function previousPage() {
 	if (currentPageNum == 1) return;
+	lastComment = false;
 
 	var newPageNum = currentPageNum - 1;
 	window.history.pushState({ page: "page" + newPageNum }, "", "#page-" + newPageNum);
@@ -160,36 +162,29 @@ function nextPage() {
 
 function lastPage() {
 	var forum = document.getElementsByClassName('forum')[0];
-	var numComments = forum.children.length - 4;
-	var newPageNum = Math.floor(numComments / commentsPerPage) + 1;
+	var comments = forum.children;
+	var numParentComments = 0;
+	for (var i = 0; i < comments.length; i++) {
+		if (comments[i].className == 'post ') {
+			numParentComments++;
+		}
+	}
+
+	var newPageNum = Math.floor(numParentComments / commentsPerPage) + 1;
+	if (newPageNum < 1) newPageNum = 1;
+	if (numParentComments % 15 == 0 && numComments > 0) newPageNum -= 1;
+
 	window.history.pushState({ page: "page" + newPageNum }, "", "#page-" + newPageNum);
 	window.location.hash = 'page-' + newPageNum;
 	currentPageNum = newPageNum;
-	showLastNComments(numComments % commentsPerPage);
-}
 
-function showLastNComments(N) {
-	var forum = document.getElementsByClassName('forum')[0];
-	var numComments = forum.children.length - 4;
-	var i = 0;
-	while (i < numComments - N) {
-		forum.children[i].style.display = 'none';
-		i++;
-	}
-
-	var j = i;
-	while (j < N) {
-		forum.children[j].style.display = 'block';
-		j++;
-	}
+	showCommentsByPage(newPageNum);
 }
 
 function showCommentsByPage(pageNum) {
 	var numComments = comments.length;
 	var start = (pageNum-1) * commentsPerPage;
 	var i = 0, j = 0;
-
-	console.log(pageNum, start, start+commentsPerPage, numComments);
 
 	while (i < start) {
 		comments[i].parent.style.display = 'none';

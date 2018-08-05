@@ -63,3 +63,8 @@
 	background-color: #dadada;
 	cursor: pointer;
 }
+
+.featured-match-teams {
+	margin: auto;
+	padding-top: 10px;
+}
