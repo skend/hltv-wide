@@ -68,3 +68,11 @@
 	margin: auto;
 	padding-top: 10px;
 }
+
+.newReplyBox {
+	top: 0px;
+}
+
+.overlayImageFrame-square .playerFlagName {
+	top: 11px;
+}
