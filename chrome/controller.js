@@ -49,10 +49,82 @@ function determineLayout(ranking, width, useColors, setBoxes, commentPages) {
 			useColorsOnMatches();
 		}
 
-		if (setBoxes && url == 'https://www.hltv.org/')
-			switchReplaysAndStreams();
+		if (url == 'https://www.hltv.org/') {
+			if (setBoxes)
+				switchReplaysAndStreams();
+
+			var logo = document.getElementsByClassName('event-coverage-logo')[0];
+			var buttons = document.getElementsByClassName('event-coverage-hub-link');
+			adjustCoverageHub(width, logo, buttons);
+		}
+		
 
 	});
+}
+
+function adjustCoverageHub(width, logo, buttons) {
+	// more disgusting switch statements ayy lmao
+	switch (width) {
+		case '1000':
+			logo.firstChild.firstChild.style.width = '100px';
+
+			for (var i = 0; i < buttons.length; i++) {
+				buttons[i].style.fontSize = '14px';
+				buttons[i].firstChild.style.padding = '2px 18px';
+			}
+
+			break;
+		case '1100':
+			logo.firstChild.firstChild.style.width = '111px';
+
+			for (var i = 0; i < buttons.length; i++) {
+				buttons[i].style.fontSize = '15px';
+				buttons[i].firstChild.style.padding = '2px 21px';
+			}
+
+			break;
+		case '1200':
+			logo.firstChild.firstChild.style.width = '122px';
+
+			for (var i = 0; i < buttons.length; i++) {
+				buttons[i].style.fontSize = '16px';
+				buttons[i].firstChild.style.padding = '2px 24px';
+			}
+			
+			break;
+		case '1300':
+			logo.firstChild.firstChild.style.width = '133px';
+
+			for (var i = 0; i < buttons.length; i++) {
+				buttons[i].style.fontSize = '17px';
+				buttons[i].firstChild.style.padding = '2px 27px';
+			}
+			
+			break;
+		case '1400':
+			logo.firstChild.firstChild.style.width = '144px';
+
+			for (var i = 0; i < buttons.length; i++) {
+				buttons[i].style.fontSize = '18px';
+				buttons[i].firstChild.style.padding = '2px 30px';
+			}
+
+			break;
+		case '1500':
+		case '1600':
+		case '1700':
+		case '1800':
+			logo.firstChild.firstChild.style.width = '155px';
+
+			for (var i = 0; i < buttons.length; i++) {
+				buttons[i].style.fontSize = '19px';
+				buttons[i].firstChild.style.padding = '2px 33px';
+			}
+
+			break;
+		default:
+			console.log('Error regarding width. Width = ' + width);
+	}
 }
 
 // This function should only be called once on page load.

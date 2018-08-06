@@ -29,3 +29,16 @@
 .overlayImageFrame {
 	padding-top: 16px;
 }
+
+.overlayImageFrame-unknown {
+	padding-top: 16px;
+}
+
+.event-coverage-logo .a-reset img {
+    position: relative;
+    top: -29px;
+}
+
+.event-coverage-hub-link a {
+    padding: 2px 25px;
+}
