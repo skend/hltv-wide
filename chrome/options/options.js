@@ -5,20 +5,22 @@ function save_options() {
   var colors = document.getElementById('star').checked;
   var switchBoxes = document.getElementById('switch').checked;
   var commentPages = document.getElementById('pages').checked;
+  var blockUsers = document.getElementById('block').checked;
 
   chrome.storage.sync.set({
     'ranking': ranking,
     'width': width,
     'colors': colors,
     'switchBoxes': switchBoxes,
-    'commentPages': commentPages
+    'commentPages': commentPages,
+    'blockUsers': blockUsers
   }, 
   function() {
     // Update status to let user know options were saved.
     var status = document.getElementById('status');
-    status.textContent = 'Options saved!';
+    status.style.color = '#d3d3d3';
     setTimeout(function() {
-      status.textContent = '';
+      status.style.color = '#ffffff';
     }, 1000);
   });
 }
@@ -29,13 +31,15 @@ function reset_options() {
   setColors(false);
   setBoxes(false);
   setCommentPages(false);
+  setBlockUsers(false);
 
   chrome.storage.sync.set({
     'ranking': 10,
     'width': '1400',
     'colors': false,
     'switchBoxes': false,
-    'commentPages': false
+    'commentPages': false,
+    'blockUsers': false
   });
 }
 
@@ -48,6 +52,7 @@ function restore_options() {
       setColors(false);
       setBoxes(false);
       setCommentPages(false);
+      setBlockUsers(false);
       save_options();
     }
     else setRanking(response.ranking);
@@ -67,6 +72,10 @@ function restore_options() {
 
   chrome.storage.sync.get('commentPages', function (response) {
     setCommentPages(response.commentPages);
+  });
+
+  chrome.storage.sync.get('blockUsers', function (response) {
+    setBlockUsers(response.blockUsers);
   });
 }
 
@@ -107,4 +116,8 @@ function setBoxes(bool) {
 
 function setCommentPages(bool) {
   document.getElementById('pages').checked = bool;
+}
+
+function setBlockUsers(bool) {
+  document.getElementById('block').checked = bool;
 }

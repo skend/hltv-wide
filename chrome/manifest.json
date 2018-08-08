@@ -1,8 +1,8 @@
 {
     "manifest_version": 2,
     "name": "hltv-wide",
-    "version": "1.6.2",
-    "description": "Makes hltv.org wider.",
+    "version": "1.7",
+    "description": "Adds a bunch of stuff to make HLTV.org better.",
     "options_page": "options/options.html",
 
     "permissions": [

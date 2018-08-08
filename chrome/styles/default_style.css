@@ -38,10 +38,10 @@
 	max-width: none !important;
 }
 
-.newreply-con {
+/* .newreply-con {
 	top: 40px;
 	padding-bottom: 40px;
-}
+} */
 
 .page-btn {
 	width: 75px;
@@ -77,3 +77,19 @@
 	top: 11px;
 }
 
+.block-button {
+	height: 25px;
+    line-height: 25px;
+    padding: 0 9px;
+    vertical-align: middle;
+    border-left: 1px solid #3c4a58;
+}
+
+.fa-block:before {
+	content: "\f132";
+}
+
+.block-button:hover {
+    background-color: #45515f;
+    cursor: pointer;
+}

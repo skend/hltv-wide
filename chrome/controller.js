@@ -4,6 +4,7 @@ function init() {
 	var useColors;
 	var setBoxes;
 	var commentPages;
+	var blockUsers;
 
 	chrome.storage.sync.get(null, function(items) {
     	ranking = items.ranking;
@@ -11,6 +12,8 @@ function init() {
     	useColors = items.colors;
 		setBoxes = items.switchBoxes;
 		commentPages = items.commentPages;
+		lastRankingUpdate = items.lastRankingUpdate;
+		blockUsers = items.blockUsers;
 
 		if (width == undefined || ranking == undefined) {
 			width = '1400';
@@ -18,13 +21,25 @@ function init() {
 			useColors = false;
 			setBoxes = false;
 			commentPages = false;
+			lastRankingUpdate = 'default';
+			blockUsers = false;
+
+			chrome.storage.sync.set({
+				'ranking': ranking,
+				'width': width,
+				'colors': useColors,
+				'switchBoxes': setBoxes,
+				'commentPages': commentPages,
+				'lastRankingUpdate': lastRankingUpdate,
+				'blockUsers': blockUsers
+			});
 		}
 
-		determineLayout(ranking, width, useColors, setBoxes, commentPages);
+		determineLayout(ranking, width, useColors, setBoxes, commentPages, lastRankingUpdate, blockUsers);
 	  });
 }
 
-function determineLayout(ranking, width, useColors, setBoxes, commentPages) {
+function determineLayout(ranking, width, useColors, setBoxes, commentPages, lastRankingUpdate, blockUsers) {
 	injectCSS(width);
 
 	window.addEventListener("DOMContentLoaded", function() {
@@ -35,14 +50,18 @@ function determineLayout(ranking, width, useColors, setBoxes, commentPages) {
 		insertUsernameIntoNavbar();
 		foldComments();
 		var url = document.URL;
-	
-		if (!(url.startsWith('https://www.hltv.org/matches') || 
-			url.startsWith('https://www.hltv.org/events') || 
-			url.startsWith('https://www.hltv.org/ranking/teams') ||
-			url.startsWith('https://www.hltv.org/results') ||
-			url.startsWith('https://www.hltv.org/stats') ||
-			url.startsWith('https://www.hltv.org/galleries'))) {
-			editRanking(ranking);
+		
+		// update the ranking
+		let rankingTimestamp = document.getElementsByClassName('col-box-con')[1].nextElementSibling.children[2].innerText;
+		if (lastRankingUpdate != rankingTimestamp) {		
+			getRanking(ranking);
+
+			chrome.storage.sync.set({
+				'lastRankingUpdate': rankingTimestamp
+			});
+		}
+		else {
+			displayRanking(ranking);
 		}
 
 		if (useColors) {
@@ -55,10 +74,57 @@ function determineLayout(ranking, width, useColors, setBoxes, commentPages) {
 
 			var logo = document.getElementsByClassName('event-coverage-logo')[0];
 			var buttons = document.getElementsByClassName('event-coverage-hub-link');
-			adjustCoverageHub(width, logo, buttons);
+			if (logo != undefined && buttons != undefined)
+				adjustCoverageHub(width, logo, buttons);
+		}
+
+		if (commentPages) {
+			var replyBox = document.getElementsByClassName('newreply-con')[0];
+			replyBox.style.top = '40px';
+			replyBox.style.paddingBottom = '40px';
+
+			let regex = /(#r[0-9])\w+/g
+			if (url.match(regex)) {
+				document.getElementsByClassName('forumthread')[0].style.paddingTop = '37px';
+			}
+		}
+
+		if (blockUsers) {
+			// insert block buttons
+			var reportButtons = document.getElementsByClassName('report-button');
+			for (var i = 0; i < reportButtons.length; i++) {
+				reportButtons[i].insertAdjacentHTML('afterend',
+					'<div class="block-button a-default"><i class="fa fa-block"></i> Block</div>')
+			}
+
+			$('.block-button').click(function () {
+				blockUser(this);
+			})
 		}
 		
+	});
+}
 
+function blockUser(blockButton) {
+	var userProfile = blockButton.parentElement.parentElement.firstElementChild.lastElementChild.href;
+	console.log(userProfile);
+}
+
+function displayRanking(ranking) {
+	// retrieve the ranking
+	chrome.storage.sync.get(null, function (items) {
+		teams = items.teams;
+		var url = document.URL;
+		// display the ranking
+		if (!(url.startsWith('https://www.hltv.org/matches') ||
+			url.startsWith('https://www.hltv.org/events') ||
+			url.startsWith('https://www.hltv.org/ranking/teams') ||
+			url.startsWith('https://www.hltv.org/results') ||
+			url.startsWith('https://www.hltv.org/stats') ||
+			url.startsWith('https://www.hltv.org/galleries'))) {
+
+			editRanking(ranking, teams);
+		}
 	});
 }
 
@@ -412,34 +478,41 @@ function injectCSS(width) {
 	}
 }
 
-function editRankingShort(number) {
-	var container = $('.col-box-con')[1];
+function getRanking(number) {
+	$.get("https://www.hltv.org/ranking/teams/", function(response) {
+		var teams = {};
+		var ranking = [];
+		teams.ranking = ranking;
 
-	for (var i = 0; i < number - 5; i++) {
-		$(container).append(ranks[i]);
-	}
+	    var list = $(response).find('.ranked-team.standard-box');
+		for (var i = 0; i < 30; i++) {
+			var elem = list[i].children[0].children[0];
+			let name = elem.children[2].innerText;
+			let id = elem.children[1].children[0].src.slice(-4);
+
+			let entry = {'id': id, 'name': name}
+			teams.ranking.push(entry);
+		}
+
+		chrome.storage.sync.set({
+			'teams': teams
+		},
+		function () {
+			displayRanking(number);
+		});
+
+		return teams;
+	});
 }
 
-function editRanking(number) {
-	$.get("https://www.hltv.org/ranking/teams/", function(response) {
-		var teamList = [];
-		var teamIdList = [];
-		var ranking = $('.leftCol')[0].children[3];
-		var container = $('.col-box-con')[1];
-	    var list = $(response).find('.ranked-team.standard-box');
-		for (var i = 0; i < number; i++) {
-			var elem = list[i].children[0].children[0];
-			teamList[i] = elem.children[2].innerText;
-			teamIdList[i] = elem.children[1].children[0].src.slice(-4);
-		}
-
-		for (var i = 5; i < teamList.length; i++) {
-			var rankBox = '<div class="col-box rank"><a href="/ranking/teams" class="rankNum">' + (i + 1) + 
-			'.</a><img alt="' + teamList[i] + '" src="https://static.hltv.org/images/team/logo/' + teamIdList[i] + 
-			'" class="teamImg" title="' + teamList[i] + '"><a href="/team/' + teamIdList[i] + '/' + teamList[i] + '" class="text-ellipsis"> ' + teamList[i] + '</a></div>';
-			$(container).append(rankBox);
-		}
-	});
+function editRanking(number, teams) {
+	var container = $('.col-box-con')[1];
+	for (var i = 5; i < number; i++) {
+		var rankBox = '<div class="col-box rank"><a href="/ranking/teams" class="rankNum">' + (i + 1) +
+			'.</a><img alt="' + teams.ranking[i].name + '" src="https://static.hltv.org/images/team/logo/' + teams.ranking[i].id +
+			'" class="teamImg" title="' + teams.ranking[i].name + '"><a href="/team/' + teams.ranking[i].id + '/' + teams.ranking[i].name + '" class="text-ellipsis"> ' + teams.ranking[i].name + '</a></div>';
+		$(container).append(rankBox);
+	}
 }
 
 // Edit navbar to contain link to your userpage
