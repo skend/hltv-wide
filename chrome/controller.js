@@ -5,6 +5,7 @@ function init() {
 	var setBoxes;
 	var commentPages;
 	var blockUsers;
+	var blockedUsers;
 
 	chrome.storage.sync.get(null, function(items) {
     	ranking = items.ranking;
@@ -14,6 +15,7 @@ function init() {
 		commentPages = items.commentPages;
 		lastRankingUpdate = items.lastRankingUpdate;
 		blockUsers = items.blockUsers;
+		blockedUsers = items.blockedUsers;
 
 		if (width == undefined || ranking == undefined) {
 			width = '1400';
@@ -23,6 +25,7 @@ function init() {
 			commentPages = false;
 			lastRankingUpdate = 'default';
 			blockUsers = false;
+			blockedUsers = [];
 
 			chrome.storage.sync.set({
 				'ranking': ranking,
@@ -31,16 +34,19 @@ function init() {
 				'switchBoxes': setBoxes,
 				'commentPages': commentPages,
 				'lastRankingUpdate': lastRankingUpdate,
-				'blockUsers': blockUsers
+				'blockUsers': blockUsers,
+				'blockedUsers': blockedUsers
 			});
 		}
 
-		determineLayout(ranking, width, useColors, setBoxes, commentPages, lastRankingUpdate, blockUsers);
+		determineLayout(ranking, width, useColors, setBoxes, commentPages, lastRankingUpdate, blockUsers, blockedUsers);
 	  });
 }
 
-function determineLayout(ranking, width, useColors, setBoxes, commentPages, lastRankingUpdate, blockUsers) {
+function determineLayout(ranking, width, useColors, setBoxes, commentPages, lastRankingUpdate, blockUsers, blockedUsers) {
 	injectCSS(width);
+
+	if (blockedUsers == undefined) blockedUsers = [];
 
 	window.addEventListener("DOMContentLoaded", function() {
 		if (commentPages) {
@@ -93,21 +99,124 @@ function determineLayout(ranking, width, useColors, setBoxes, commentPages, last
 			// insert block buttons
 			var reportButtons = document.getElementsByClassName('report-button');
 			for (var i = 0; i < reportButtons.length; i++) {
-				reportButtons[i].insertAdjacentHTML('afterend',
-					'<div class="block-button a-default"><i class="fa fa-block"></i> Block</div>')
+				var poster = reportButtons[i].parentElement.parentElement.firstElementChild.lastElementChild.href;
+				if (blockedUsers.includes(poster)) {
+					reportButtons[i].insertAdjacentHTML('afterend',
+						'<div class="unblock-button a-default"><i class="fa fa-unblock"></i> Unblock</div>')
+				}
+				else {
+					reportButtons[i].insertAdjacentHTML('afterend',
+						'<div class="block-button a-default"><i class="fa fa-block"></i> Block</div>')
+				}
 			}
 
 			$('.block-button').click(function () {
-				blockUser(this);
+				block(this);
 			})
+
+			$('.unblock-button').click(function () {
+				block(this);
+			})
+
+			var authors = document.getElementsByClassName('authorAnchor')
+			for (var i = 1; i < authors.length; i++) {
+				if (blockedUsers.includes(authors[i].href)) {
+					authors[i].parentElement.firstElementChild.click()
+				}
+			}
 		}
 		
 	});
 }
 
+function block(button) {
+	if (button.innerText == ' Block') {
+		blockUser(button);
+	}
+	else {
+		unblockUser(button);
+	}
+}
+
+function changeBlockButton(button) {
+	button.className = 'unblock-button a-default';
+	button.innerHTML = '<i class="fa fa-unblock"></i> Unblock';
+}
+
 function blockUser(blockButton) {
 	var userProfile = blockButton.parentElement.parentElement.firstElementChild.lastElementChild.href;
-	console.log(userProfile);
+
+	console.log('block ' + userProfile)
+
+	var authors = document.getElementsByClassName('authorAnchor')
+	for (var i = 1; i < authors.length; i++) {
+		if (authors[i].href == userProfile) {
+			changeBlockButton(authors[i].parentElement.parentElement.lastElementChild.children[2]);
+			authors[i].parentElement.firstElementChild.click()
+		}
+	}
+
+	chrome.storage.sync.get(null, function (items) {
+		var blockedUsers = items.blockedUsers;
+
+		if (blockedUsers == undefined)
+			blockedUsers = [];
+
+		if (blockedUsers.includes(userProfile)) return;
+
+		blockedUsers.push(userProfile);
+
+		chrome.storage.sync.set({
+			'blockedUsers': blockedUsers
+		});
+
+		console.log(blockedUsers)
+	});
+}
+
+function changeUnblockButton(button) {
+	button.className = 'block-button a-default';
+	button.innerHTML = '<i class="fa fa-block"></i> Block';
+}
+
+function unblockUser(unblockButton) {
+	var userProfile = unblockButton.parentElement.parentElement.firstElementChild.lastElementChild.href;
+	
+	console.log('unblock ' + userProfile)
+
+	var authors = document.getElementsByClassName('authorAnchor')
+	for (var i = 1; i < authors.length; i++) {
+		if (authors[i].href == userProfile) {
+			changeUnblockButton(authors[i].parentElement.parentElement.lastElementChild.children[2]);
+			authors[i].parentElement.firstElementChild.click()
+		}
+	}
+
+	chrome.storage.sync.get(null, function (items) {
+		var blockedUsers = items.blockedUsers;
+
+		if (blockedUsers == undefined) {
+			console.log('no block list found?');
+			return;
+		}
+
+		if (blockedUsers.includes(userProfile)) {
+			var index = blockedUsers.indexOf(userProfile);
+			if (index > -1) {
+				blockedUsers.splice(index, 1);
+			}
+
+			chrome.storage.sync.set({
+				'blockedUsers': blockedUsers
+			});
+
+			console.log(blockedUsers)
+		}
+		else {
+			console.log('user not found on block list')
+			return;
+		}	
+	});
 }
 
 function displayRanking(ranking) {
@@ -542,6 +651,9 @@ function foldComments() {
 		if (!($(this).hasClass('newReplyBox'))) {
 			if ((this.parentElement).className == 'threading') {
 				var box = this.parentElement.children[0].children[0].children;
+				addMinus(box[0]);
+
+				box = this.firstElementChild.firstElementChild.children;
 				addMinus(box[0]);
 			}
 			else if ((this.parentElement).className == 'children') {
