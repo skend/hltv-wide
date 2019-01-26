@@ -12,3 +12,5 @@
 ## Features in the works (sort of - I'm lazy)
 * Forum posts split the comments section into pages
 * Lets users block others in the forums to hide their comments
+
+[You can download the extension for Google Chrome](https://chrome.google.com/webstore/detail/hltv-wide/idcembbhaoennpajmicekipfpidhdhko)
