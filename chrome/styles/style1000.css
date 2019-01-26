@@ -35,10 +35,15 @@
 }
 
 .event-coverage-logo .a-reset img {
+	width: 60px !important;
     position: relative;
-    top: -19px;
+    top: 0px;
+}
+
+.event-coverage-hub-link {
+    font-size: 14px;
 }
 
 .event-coverage-hub-link a {
-    padding: 2px 20px;
+    padding: 2px 18px;
 }

@@ -35,10 +35,19 @@
 }
 
 .event-coverage-logo .a-reset img {
+	width: 80px !important;
     position: relative;
-    top: -40px;
+	top: -10px;
+}
+
+.event-coverage-hub-link {
+	font-size: 17px !important;
 }
 
 .event-coverage-hub-link a {
-    padding: 2px 30px;
+	padding: 4px 30px !important;
+}
+
+.widget-upcoming-matches .team-name {
+	padding-left: 8px !important;
 }

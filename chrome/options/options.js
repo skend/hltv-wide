@@ -6,6 +6,10 @@ function save_options() {
   var switchBoxes = document.getElementById('switch').checked;
   var commentPages = document.getElementById('pages').checked;
   var blockUsers = document.getElementById('block').checked;
+  var hideMales = document.getElementById('stream_males').checked;
+  var hideFemales = document.getElementById('stream_females').checked;
+  var hideCasters = document.getElementById('stream_casters').checked;
+  var hideOthers = document.getElementById('stream_others').checked;
 
   chrome.storage.sync.set({
     'ranking': ranking,
@@ -13,7 +17,11 @@ function save_options() {
     'colors': colors,
     'switchBoxes': switchBoxes,
     'commentPages': commentPages,
-    'blockUsers': blockUsers
+    'blockUsers': blockUsers,
+    'hideMales': hideMales,
+    'hideFemales': hideFemales,
+    'hideCasters': hideCasters,
+    'hideOthers': hideOthers
   }, 
   function() {
     // Update status to let user know options were saved.
@@ -32,6 +40,10 @@ function reset_options() {
   setBoxes(false);
   setCommentPages(false);
   setBlockUsers(false);
+  setHideMales(false)
+  setHideFemales(false)
+  setHideCasters(false)
+  setHideOthers(false)
 
   chrome.storage.sync.set({
     'ranking': 10,
@@ -39,7 +51,11 @@ function reset_options() {
     'colors': false,
     'switchBoxes': false,
     'commentPages': false,
-    'blockUsers': false
+    'blockUsers': false,
+    'hideMales': false,
+    'hideFemales': false,
+    'hideCasters': false,
+    'hideOthers': false
   });
 }
 
@@ -53,6 +69,10 @@ function restore_options() {
       setBoxes(false);
       setCommentPages(false);
       setBlockUsers(false);
+      setHideMales(false)
+      setHideFemales(false)
+      setHideCasters(false)
+      setHideOthers(false)
       save_options();
     }
     else setRanking(response.ranking);
@@ -76,6 +96,22 @@ function restore_options() {
 
   chrome.storage.sync.get('blockUsers', function (response) {
     setBlockUsers(response.blockUsers);
+  });
+
+  chrome.storage.sync.get('hideMales', function (response) {
+    setHideMales(response.hideMales);
+  });
+
+  chrome.storage.sync.get('hideFemales', function (response) {
+    setHideFemales(response.hideFemales);
+  });
+
+  chrome.storage.sync.get('hideCasters', function (response) {
+    setHideCasters(response.hideCasters);
+  });
+
+  chrome.storage.sync.get('hideOthers', function (response) {
+    setHideOthers(response.hideOthers);
   });
 }
 
@@ -120,4 +156,20 @@ function setCommentPages(bool) {
 
 function setBlockUsers(bool) {
   document.getElementById('block').checked = bool;
+}
+
+function setHideMales(bool) {
+  document.getElementById('stream_males').checked = bool;
+}
+
+function setHideFemales(bool) {
+  document.getElementById('stream_females').checked = bool;
+}
+
+function setHideCasters(bool) {
+  document.getElementById('stream_casters').checked = bool;
+}
+
+function setHideOthers(bool) {
+  document.getElementById('stream_others').checked = bool;
 }

@@ -18,6 +18,30 @@
 	display: none !important;
 }
 
+#g0_middle {
+	display: none !important;
+}
+
+#g0_right {
+	display: none !important;
+}
+
+#g1_middle {
+	display: none !important;
+}
+
+#g4_middle {
+	display: none !important;
+}
+
+#g4_bottom {
+	display: none !important;
+}
+
+#g0_forum {
+	display: none !important;
+}
+
 .matchCat {
 	box-shadow: inset 3px 0 0 0 #e63865 !important;
 }
