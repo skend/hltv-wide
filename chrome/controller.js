@@ -1,3 +1,7 @@
+// chrome.tabs.executeScript({
+//   file: 'contentScript.js'
+// });
+
 function init() {
   chrome.storage.sync.get(null, function (items) {
     var ranking = items.ranking;
@@ -13,6 +17,7 @@ function init() {
     var hideFemales = items.hideFemales
     var hideCasters = items.hideCasters
     var hideOthers = items.hideOthers;
+    var hideAds = items.hideAds
 
     if (teams == undefined || teams.ranking != null) {
       teams = getRanking(ranking)
@@ -26,7 +31,7 @@ function init() {
       ranking: ranking, teams: teams, width: width, useColors: useColors, setBoxes: setBoxes,
       commentPages: commentPages, lastRankingUpdate: lastRankingUpdate, blockUsers: blockUsers,
       blockedUsers: blockedUsers, hideMales: hideMales, hideFemales: hideFemales, hideCasters: hideCasters,
-      hideOthers: hideOthers
+      hideOthers: hideOthers, hideAds: hideAds
     });
   });
 }
@@ -43,7 +48,8 @@ function resetOptions() {
   hideFemales = false
   hideCasters = false
   hideOthers = false
-  blockedUsers = [];
+  blockedUsers = []
+  hideAds = true
 
   chrome.storage.sync.set({
     'ranking': ranking,
@@ -58,7 +64,8 @@ function resetOptions() {
     'hideMales': hideMales,
     'hideFemales': hideFemales,
     'hideCasters': hideCasters,
-    'hideOthers': hideOthers
+    'hideOthers': hideOthers,
+    'hideAds': hideAds
   });
 }
 
@@ -157,6 +164,10 @@ function determineLayout(options) {
         useColorsOnMatches();
       }
     })
+
+    if (options.hideAds) {
+      hideAds()
+    }
   });
 }
 
@@ -255,7 +266,7 @@ function hideStreamers(streamerOptions) {
   var streamers = document.getElementsByClassName('streamer')
   for (var i = 0; i < streamers.length; i++) {
     var current = undefined
-    if (i % 2 == 0) {
+    if (streamers[i].firstChild.firstChild != null) {
       current = streamers[i].firstChild.firstChild.src
     }
     else {
@@ -517,6 +528,13 @@ function swapNodes(a, b) {
   var asibling = a.nextSibling === b ? a : a.nextSibling;
   b.parentNode.insertBefore(a, b);
   aparent.insertBefore(b, asibling);
+}
+
+function hideAds() {
+  document.head.insertAdjacentHTML('beforeend',
+    '<link rel="stylesheet" type="text/css" href="' +
+    chrome.runtime.getURL("styles/hide_ads.css") + '">'
+  );
 }
 
 function injectCSS(width) {

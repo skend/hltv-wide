@@ -47,3 +47,20 @@
 .event-coverage-hub-link a {
     padding: 2px 18px;
 }
+
+.featured-match-teams {
+	max-width: 110px;
+}
+
+.team-odds-1 {
+	max-width: 55px;
+}
+
+.team-odds-2 {
+	max-width: 55px;
+}
+
+.team-name.text-ellipsis {
+	max-width: 60px;
+    padding-left: 6px;
+}

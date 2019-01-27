@@ -47,3 +47,7 @@
 .event-coverage-hub-link a {
     padding: 2px 33px !important;
 }
+
+.team-name.text-ellipsis {
+    padding-left: 6px !important;
+}

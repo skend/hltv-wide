@@ -7,7 +7,8 @@
 
     "permissions": [
         "storage",
-        "https://*.hltv.org/"
+        "https://*.hltv.org/",
+        "activeTab"
     ],
 
     "icons": { "128": "img/icon_128.png" },
@@ -21,7 +22,8 @@
         "styles/style1500.css",
         "styles/style1600.css",
         "styles/style1700.css",
-        "styles/style1800.css"
+        "styles/style1800.css",
+        "styles/hide_ads.css"
     ],
 
     "content_scripts" : [{

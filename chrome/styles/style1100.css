@@ -51,3 +51,20 @@
 .widget-upcoming-matches .team-name {
 	padding-left: 2px !important;
 }
+
+.featured-match-teams {
+	max-width: 120px;
+}
+
+.team-odds-1 {
+	max-width: 60px;
+}
+
+.team-odds-2 {
+	max-width: 60px;
+}
+
+.team-name.text-ellipsis {
+	max-width: 65px;
+    padding-left: 6px !important;
+}

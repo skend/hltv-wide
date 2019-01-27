@@ -10,6 +10,7 @@ function save_options() {
   var hideFemales = document.getElementById('stream_females').checked;
   var hideCasters = document.getElementById('stream_casters').checked;
   var hideOthers = document.getElementById('stream_others').checked;
+  var hideAds = document.getElementById('ads').checked;
 
   chrome.storage.sync.set({
     'ranking': ranking,
@@ -21,7 +22,8 @@ function save_options() {
     'hideMales': hideMales,
     'hideFemales': hideFemales,
     'hideCasters': hideCasters,
-    'hideOthers': hideOthers
+    'hideOthers': hideOthers,
+    'hideAds': hideAds
   }, 
   function() {
     // Update status to let user know options were saved.
@@ -33,7 +35,7 @@ function save_options() {
   });
 }
 
-function reset_options() {
+function scrubOptionToggles() {
   setRanking(10);
   setWidth('1400');
   setColors(false);
@@ -44,6 +46,11 @@ function reset_options() {
   setHideFemales(false)
   setHideCasters(false)
   setHideOthers(false)
+  setHideAds(true)
+}
+
+function reset_options() {
+  scrubOptionToggles()
 
   chrome.storage.sync.set({
     'ranking': 10,
@@ -55,7 +62,8 @@ function reset_options() {
     'hideMales': false,
     'hideFemales': false,
     'hideCasters': false,
-    'hideOthers': false
+    'hideOthers': false,
+    'hideAds': true
   });
 }
 
@@ -63,17 +71,8 @@ function reset_options() {
 function restore_options() {
   chrome.storage.sync.get('ranking', function(response) {
     if (response.ranking == undefined) {
-      setRanking(10);
-      setWidth('1400');
-      setColors(false);
-      setBoxes(false);
-      setCommentPages(false);
-      setBlockUsers(false);
-      setHideMales(false)
-      setHideFemales(false)
-      setHideCasters(false)
-      setHideOthers(false)
-      save_options();
+      scrubOptionToggles()
+      save_options()
     }
     else setRanking(response.ranking);
   });
@@ -112,6 +111,10 @@ function restore_options() {
 
   chrome.storage.sync.get('hideOthers', function (response) {
     setHideOthers(response.hideOthers);
+  });
+
+  chrome.storage.sync.get('hideAds', function (response) {
+    setHideAds(response.hideAds);
   });
 }
 
@@ -172,4 +175,8 @@ function setHideCasters(bool) {
 
 function setHideOthers(bool) {
   document.getElementById('stream_others').checked = bool;
+}
+
+function setHideAds(bool) {
+  document.getElementById('ads').checked = bool;
 }
