@@ -69,106 +69,92 @@ function resetOptions() {
   });
 }
 
+function injectLiveCSS(width) {
+  if (!document.URL.endsWith(".org/live")) return
+  document.head.insertAdjacentHTML('beforeend',
+    '<link rel="stylesheet" type="text/css" href="' +
+    chrome.runtime.getURL("styles/live" + width + ".css") + '">'
+  );
+}
+
 function determineLayout(options) {
-  injectCSS(options.width);
+  injectCSS(options.width)
+  hideAds(options.hideAds)
+  injectLiveCSS(options.width)
 
-  if (options.blockedUsers == undefined) options.blockedUsers = [];
+  if (options.blockedUsers == undefined) options.blockedUsers = []
 
-  window.addEventListener("DOMContentLoaded", function () {
-    if (options.commentPages) {
-      pageComments();
-    }
+  window.addEventListener("DOMContentLoaded", function() {
+    finishLayout(options)
+  })
+}
 
-    insertUsernameIntoNavbar();
-    foldComments();
-    var url = document.URL;
+function finishLayout(options) {
+  pageComments(options.commentPages)
+  insertUsernameIntoNavbar()
+  foldComments()
+  extendRanking(options.ranking, options.lastRankingUpdate)
+  useColorsOnMatches(options.useColors)
+  switchReplaysAndStreams(options.setBoxes)
+  showBlockButtons(options.blockUsers)
+  
+  var streamerOptions = {
+    hideMales: options.hideMales, hideFemales: options.hideFemales,
+    hideCasters: options.hideCasters, hideOthers: options.hideOthers
+  }
+  hideStreamers(streamerOptions)
+}
 
-    // update the ranking
-    if (url == "https://www.hltv.org/" || url.startsWith("https://www.hltv.org/forums")) {
-      let rankingTimestamp = document.getElementsByClassName('col-box-con')[1].nextElementSibling.children[2].innerText;
-      if (options.lastRankingUpdate != rankingTimestamp) {
-        var teams = getRanking(options.ranking);
-
-        chrome.storage.sync.set({
-          'lastRankingUpdate': rankingTimestamp,
-          'teams': teams
-        });
-
-        displayRanking(options.ranking)
+function showBlockButtons(blockUsers) {
+  if (blockUsers) {
+    // insert block buttons
+    var reportButtons = document.getElementsByClassName('report-button');
+    for (var i = 0; i < reportButtons.length; i++) {
+      var poster = reportButtons[i].parentElement.parentElement.firstElementChild.lastElementChild.href;
+      if (options.blockedUsers.includes(poster)) {
+        reportButtons[i].insertAdjacentHTML('afterend',
+          '<div class="unblock-button a-default"><i class="fa fa-unblock"></i> Unblock</div>')
       }
       else {
-        displayRanking(options.ranking);
+        reportButtons[i].insertAdjacentHTML('afterend',
+          '<div class="block-button a-default"><i class="fa fa-block"></i> Block</div>')
       }
     }
 
-    if (options.useColors) {
-      useColorsOnMatches();
-    }
-
-    if (url == 'https://www.hltv.org/') {
-      if (options.setBoxes)
-        switchReplaysAndStreams();
-    }
-
-    if (options.commentPages) {
-      var replyBox = document.getElementsByClassName('newreply-con')[0];
-      replyBox.style.top = '40px';
-      replyBox.style.paddingBottom = '40px';
-
-      let regex = /(#r[0-9])\w+/g
-      if (url.match(regex)) {
-        document.getElementsByClassName('forumthread')[0].style.paddingTop = '37px';
-      }
-    }
-
-    if (options.blockUsers) {
-      // insert block buttons
-      var reportButtons = document.getElementsByClassName('report-button');
-      for (var i = 0; i < reportButtons.length; i++) {
-        var poster = reportButtons[i].parentElement.parentElement.firstElementChild.lastElementChild.href;
-        if (options.blockedUsers.includes(poster)) {
-          reportButtons[i].insertAdjacentHTML('afterend',
-            '<div class="unblock-button a-default"><i class="fa fa-unblock"></i> Unblock</div>')
-        }
-        else {
-          reportButtons[i].insertAdjacentHTML('afterend',
-            '<div class="block-button a-default"><i class="fa fa-block"></i> Block</div>')
-        }
-      }
-
-      $('.block-button').click(function () {
-        block(this);
-      })
-
-      $('.unblock-button').click(function () {
-        block(this);
-      })
-
-      var authors = document.getElementsByClassName('authorAnchor')
-      for (var i = 1; i < authors.length; i++) {
-        if (options.blockedUsers.includes(authors[i].href)) {
-          authors[i].parentElement.firstElementChild.click()
-        }
-      }
-    }
-
-    var streamerOptions = {
-      hideMales: options.hideMales, hideFemales: options.hideFemales,
-      hideCasters: options.hideCasters, hideOthers: options.hideOthers
-    }
-    hideStreamers(streamerOptions)
-
-    var nightMode = document.getElementsByClassName("right slider")[0]
-    nightMode.addEventListener("click", function () {
-      if (options.useColors) {
-        useColorsOnMatches();
-      }
+    $('.block-button').click(function () {
+      block(this);
     })
 
-    if (options.hideAds) {
-      hideAds()
+    $('.unblock-button').click(function () {
+      block(this);
+    })
+
+    var authors = document.getElementsByClassName('authorAnchor')
+    for (var i = 1; i < authors.length; i++) {
+      if (options.blockedUsers.includes(authors[i].href)) {
+        authors[i].parentElement.firstElementChild.click()
+      }
     }
-  });
+  }
+}
+
+function extendRanking(ranking, lastRankingUpdate) {
+  if (document.URL == "https://www.hltv.org/" || document.URL.startsWith("https://www.hltv.org/forums") || document.URL.startsWith("https://www.hltv.org/message/")) {
+    let rankingTimestamp = document.getElementsByClassName('col-box-con')[1].nextElementSibling.children[2].innerText
+    if (lastRankingUpdate != rankingTimestamp) {
+      var teams = getRanking(ranking)
+
+      chrome.storage.sync.set({
+        'lastRankingUpdate': rankingTimestamp,
+        'teams': teams
+      });
+
+      displayRanking(ranking)
+    }
+    else {
+      displayRanking(ranking)
+    }
+  }
 }
 
 function block(button) {
@@ -308,7 +294,9 @@ function displayRanking(ranking) {
 }
 
 // This function should only be called once on page load.
-function pageComments() {
+function pageComments(commentPages) {
+  if (!commentPages) return
+
   var forum = document.getElementsByClassName('forum');
 
   if (forum.length == 0) return;
@@ -375,6 +363,15 @@ function pageComments() {
     comments[i].children.style.display = 'none';
 
     i++;
+  }
+
+  var replyBox = document.getElementsByClassName('newreply-con')[0];
+  replyBox.style.top = '40px';
+  replyBox.style.paddingBottom = '40px';
+
+  let regex = /(#r[0-9])\w+/g
+  if (url.match(regex)) {
+    document.getElementsByClassName('forumthread')[0].style.paddingTop = '37px';
   }
 }
 
@@ -463,9 +460,11 @@ function showCommentsByPage(pageNum) {
   }
 }
 
-function switchReplaysAndStreams() {
-  var streams = $('.rightCol')[0].children;
-  var replays = $('.right2Col')[0].children;
+function switchReplaysAndStreams(setBoxes) {
+  if (document.URL != 'https://www.hltv.org/' && !setBoxes) return
+
+  var streams = document.getElementsByClassName('rightCol')[0].children;
+  var replays = document.getElementsByClassName('right2Col')[0].children;
   var asides = [];
   var count = 0;
 
@@ -530,7 +529,8 @@ function swapNodes(a, b) {
   aparent.insertBefore(b, asibling);
 }
 
-function hideAds() {
+function hideAds(hideAds) {
+  if (!hideAds) return
   document.head.insertAdjacentHTML('beforeend',
     '<link rel="stylesheet" type="text/css" href="' +
     chrome.runtime.getURL("styles/hide_ads.css") + '">'
@@ -690,17 +690,27 @@ function addMinus(element) {
 }
 
 // Edit matches column to colour ones with X number of stars
-function useColorsOnMatches() {
-  var nightmode = document.getElementById("popupsettings").children[3].children[1].firstChild.classList.contains("selected")
+function useColorsOnMatches(useColors) {
+  if (!useColors) return
+
+  var nightmode = document.getElementById("popupsettings").children[3].children[1].getElementsByClassName('selected')[0].classList.contains('userTheme-night')
 
   if (nightmode) {
-    var colors = getNightmodeMatchColors()
-    changeMatchBoxColor(colors, nightmode)
+    changeMatchBoxColor(getNightmodeMatchColors(), nightmode)
   }
   else {
-    var colors = getLightmodeMatchColors()
-    changeMatchBoxColor(colors, nightmode)
+    changeMatchBoxColor(getLightmodeMatchColors(), nightmode)
   }
+
+  var lightButton = document.getElementById("popupsettings").children[3].children[1].children[0]
+  lightButton.addEventListener("click", function () {
+    changeMatchBoxColor(getLightmodeMatchColors(), !nightmode)
+  })
+
+  var nightButton = document.getElementById("popupsettings").children[3].children[1].children[1]
+  nightButton.addEventListener("click", function () {
+    changeMatchBoxColor(getNightmodeMatchColors(), nightmode)
+  })
 }
 
 function changeMatchBoxColor(colors, nightmode) {
@@ -754,7 +764,7 @@ function getNightmodeMatchColors() {
   return {
     topColors: ['#17538c', '#0d8261', '#601aad', '#ff733d', '#eac820'],
     bottomColors: ['#144573', '#0b6f53', '#4e138e', '#af4820', '#b19716'],
-    textColors: ['#87a3bf', '#b5c2d0', '#87a3bf', '#b5c2d0', '#383333'],
+    textColors: ['#dcdcdc', '#dcdcdc', '#dcdcdc', '#dcdcdc', '#000000'],
     hoverColors: ['#9fb9d4', '', '#9fb9d4', '', '#676767']
   }
 }

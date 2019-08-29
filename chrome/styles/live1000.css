@@ -1,0 +1,25 @@
+.colCon {
+    min-height: 800px !important;
+}
+
+.stream-container {
+    min-height: 430px !important;
+}
+
+.live-twitch-chat {
+    height: 297px !important;
+}
+
+.scroll-container {
+    height: 297px !important;
+}
+
+.stats-container {
+    position: relative;
+    top: 40px;
+}
+
+.live-odds-widget {
+    position: relative;
+    top: 40px;
+}
