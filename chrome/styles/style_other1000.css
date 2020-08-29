@@ -1,0 +1,66 @@
+.bgPadding {
+	max-width: 100% !important;
+}
+
+.widthControl {
+	max-width: 1010px !important;
+}
+
+.rightCol {
+	min-width: 143px !important;
+}
+
+.right2Col {
+	min-width: 165px !important;
+}
+
+.navcon {
+	max-width: 1010px !important;
+}
+
+.widthControl .footerlinks {
+	max-width: 1010px !important;
+}
+
+.leftCol {
+	min-width: 122px !important;
+}
+
+.overlayImageFrame {
+	padding-top: 4px;
+}
+
+.overlayImageFrame-unknown {
+	padding-top: 4px;
+}
+
+.event-coverage-logo .a-reset img {
+	width: 60px !important;
+    position: relative;
+    top: 0px;
+}
+
+.event-coverage-hub-link {
+    font-size: 14px;
+}
+
+.event-coverage-hub-link a {
+    padding: 2px 18px;
+}
+
+.featured-match-teams {
+	max-width: 110px;
+}
+
+.team-odds-1 {
+	max-width: 55px;
+}
+
+.team-odds-2 {
+	max-width: 55px;
+}
+
+.team-name.text-ellipsis {
+	max-width: 60px;
+    padding-left: 6px;
+}

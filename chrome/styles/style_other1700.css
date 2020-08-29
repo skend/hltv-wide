@@ -1,0 +1,53 @@
+.bgPadding {
+	max-width: 100% !important;
+}
+
+.widthControl {
+	max-width: 1710px !important;
+}
+
+.rightCol {
+	min-width: 243px !important;
+}
+
+.right2Col {
+	min-width: 279px !important;
+}
+
+.navcon {
+	max-width: 1710px !important;
+}
+
+.widthControl .footerlinks {
+	max-width: 1710px !important;
+}
+
+.leftCol {
+	min-width: 206px !important;
+}
+
+.overlayImageFrame {
+	padding-top: 44px;
+}
+
+.overlayImageFrame-unknown {
+	padding-top: 44px;
+}
+
+.event-coverage-logo .a-reset img {
+	width: 85px !important;
+    position: relative;
+    top: -19px;
+}
+
+.event-coverage-hub-link {
+    font-size: 19px !important;
+}
+
+.event-coverage-hub-link a {
+    padding: 2px 33px !important;
+}
+
+.team-name.text-ellipsis {
+    padding-left: 6px !important;
+}

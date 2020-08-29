@@ -8,10 +8,20 @@
 
 .rightCol {
 	min-width: 200px !important;
+	position: relative !important;
+	left: -140px !important;
+}
+
+.contentCol {
+	max-width: 770px !important;
+	position: relative !important;
+	left: 5px !important;
 }
 
 .right2Col {
 	min-width: 230px !important;
+	position: relative !important;
+	left: -90px !important;
 }
 
 .navcon {
@@ -36,7 +46,7 @@
 
 .event-coverage-logo .a-reset img {
 	width: 80px !important;
-    position: relative;
+	position: relative;
 	top: -10px;
 }
 

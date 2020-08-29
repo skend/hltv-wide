@@ -84,7 +84,7 @@ function determineLayout(options) {
 
   if (options.blockedUsers == undefined) options.blockedUsers = []
 
-  window.addEventListener("DOMContentLoaded", function() {
+  window.addEventListener("DOMContentLoaded", function () {
     finishLayout(options)
   })
 }
@@ -97,7 +97,7 @@ function finishLayout(options) {
   useColorsOnMatches(options.useColors)
   switchReplaysAndStreams(options.setBoxes)
   showBlockButtons(options.blockUsers)
-  
+
   var streamerOptions = {
     hideMales: options.hideMales, hideFemales: options.hideFemales,
     hideCasters: options.hideCasters, hideOthers: options.hideOthers
@@ -140,7 +140,7 @@ function showBlockButtons(blockUsers) {
 
 function extendRanking(ranking, lastRankingUpdate) {
   if (document.URL == "https://www.hltv.org/" || document.URL.startsWith("https://www.hltv.org/forums") || document.URL.startsWith("https://www.hltv.org/message/")) {
-    let rankingTimestamp = document.getElementsByClassName('col-box-con')[1].nextElementSibling.children[2].innerText
+    let rankingTimestamp = document.getElementsByClassName('col-box-con')[0].nextElementSibling.children[2].innerText
     if (lastRankingUpdate != rankingTimestamp) {
       var teams = getRanking(ranking)
 
@@ -461,7 +461,9 @@ function showCommentsByPage(pageNum) {
 }
 
 function switchReplaysAndStreams(setBoxes) {
-  if (document.URL != 'https://www.hltv.org/' && !setBoxes) return
+  if (document.URL == 'https://www.hltv.org/' && setBoxes != true) {
+    return;
+  }
 
   var streams = document.getElementsByClassName('rightCol')[0].children;
   var replays = document.getElementsByClassName('right2Col')[0].children;
@@ -477,7 +479,6 @@ function switchReplaysAndStreams(setBoxes) {
 
   asides = [];
   count = 0;
-  var replays = document.getElementsByClassName('right2Col')[0].children;
   for (var i = 0; i < replays.length; i++) {
     if (replays[i].tagName == 'ASIDE') {
       asides[count++] = replays[i];
@@ -538,10 +539,18 @@ function hideAds(hideAds) {
 }
 
 function injectCSS(width) {
-  document.head.insertAdjacentHTML('beforeend',
-    '<link rel="stylesheet" type="text/css" href="' +
-    chrome.runtime.getURL("styles/style" + width + ".css") + '">'
-  );
+  if (document.URL == "https://www.hltv.org/") {
+    document.head.insertAdjacentHTML('beforeend',
+      '<link rel="stylesheet" type="text/css" href="' +
+      chrome.runtime.getURL("styles/style" + width + ".css") + '">'
+    );
+  }
+  else {
+    document.head.insertAdjacentHTML('beforeend',
+      '<link rel="stylesheet" type="text/css" href="' +
+      chrome.runtime.getURL("styles/style_other" + width + ".css") + '">'
+    );
+  }
 }
 
 function getRanking(number) {
@@ -573,7 +582,7 @@ function getRanking(number) {
 function editRanking(number, teams) {
   if (teams == undefined) return
 
-  var container = $('.col-box-con')[1];
+  var container = $('.col-box-con')[0];
   for (var i = 5; i < number; i++) {
     var rankBox = '<div class="col-box rank"><a href="/ranking/teams" class="rankNum">' + (i + 1) +
       '.</a><img alt="' + teams[i].name + '" src="https://static.hltv.org/images/team/logo/' + teams[i].id +

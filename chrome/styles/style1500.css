@@ -8,10 +8,20 @@
 
 .rightCol {
 	min-width: 214px !important;
+	position: relative !important;
+	left: -178px !important;
+}
+
+.contentCol {
+	max-width: 815px !important;
+	position: relative !important;
+	left: 20px !important;
 }
 
 .right2Col {
 	min-width: 246px !important;
+	position: relative !important;
+	left: -110px !important;
 }
 
 .navcon {
@@ -36,18 +46,18 @@
 
 .event-coverage-logo .a-reset img {
 	width: 85px !important;
-    position: relative;
-    top: -13px;
+	position: relative;
+	top: -13px;
 }
 
 .event-coverage-hub-link {
-    font-size: 19px !important;
+	font-size: 19px !important;
 }
 
 .event-coverage-hub-link a {
-    padding: 2px 33px !important;
+	padding: 2px 33px !important;
 }
 
 .team-name.text-ellipsis {
-    padding-left: 6px !important;
+	padding-left: 6px !important;
 }

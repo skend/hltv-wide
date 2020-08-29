@@ -6,12 +6,20 @@
 	max-width: 1310px !important;
 }
 
+.contentCol {
+	max-width: 691px !important;
+}
+
 .rightCol {
 	min-width: 186px !important;
+	position: relative !important;
+	left: -120px !important;
 }
 
 .right2Col {
 	min-width: 214px !important;
+	position: relative !important;
+	left: -80px !important;
 }
 
 .navcon {
@@ -36,8 +44,8 @@
 
 .event-coverage-logo .a-reset img {
 	width: 75px !important;
-    position: relative;
-    top: -7px;
+	position: relative;
+	top: -7px;
 }
 
 .event-coverage-hub-link {
@@ -45,7 +53,7 @@
 }
 
 .event-coverage-hub-link a {
-    padding: 2px 27px !important;
+	padding: 2px 27px !important;
 }
 
 .widget-upcoming-matches .team-name {

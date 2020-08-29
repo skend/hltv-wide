@@ -1,0 +1,53 @@
+.bgPadding {
+	max-width: 100% !important;
+}
+
+.widthControl {
+	max-width: 1310px !important;
+}
+
+.rightCol {
+	min-width: 186px !important;
+}
+
+.right2Col {
+	min-width: 214px !important;
+}
+
+.navcon {
+	max-width: 1310px !important;
+}
+
+.widthControl .footerlinks {
+	max-width: 1310px !important;
+}
+
+.leftCol {
+	min-width: 158px !important;
+}
+
+.overlayImageFrame {
+	padding-top: 21px;
+}
+
+.overlayImageFrame-unknown {
+	padding-top: 21px;
+}
+
+.event-coverage-logo .a-reset img {
+	width: 75px !important;
+    position: relative;
+    top: -7px;
+}
+
+.event-coverage-hub-link {
+	font-size: 17px !important;
+}
+
+.event-coverage-hub-link a {
+    padding: 2px 27px !important;
+}
+
+.widget-upcoming-matches .team-name {
+	padding-left: 6px !important;
+}
