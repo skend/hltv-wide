@@ -1,5 +1,6 @@
 .bgPadding {
 	max-width: 100% !important;
+    overflow: hidden !important;
 }
 
 .widthControl {
@@ -60,4 +61,10 @@
 
 .team-name.text-ellipsis {
 	padding-left: 6px !important;
+}
+
+.streams-section {
+    max-width: 1810px !important;
+    left: 50%;
+    transform: translateX(-50%);
 }

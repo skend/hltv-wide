@@ -1,5 +1,6 @@
 .bgPadding {
 	max-width: 100% !important;
+    overflow: hidden !important;
 }
 
 .widthControl {
@@ -60,4 +61,10 @@
 
 .widget-upcoming-matches .team-name {
 	padding-left: 8px !important;
+}
+
+.streams-section {
+    max-width: 1410px !important;
+    left: 50%;
+    transform: translateX(-50%);
 }
